@@ -17,7 +17,7 @@ const inter = Inter({ subsets: ['latin'] })
   }
   ```
 */
-import { Fragment, useState, SyntheticEvent } from 'react'
+import { Fragment, useState, SyntheticEvent, Dispatch, SetStateAction} from 'react'
 import { CheckIcon, ChevronUpDownIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
 import { Listbox, Transition } from '@headlessui/react'
 
@@ -34,9 +34,14 @@ function getRandomElement<T>(array: T[]): T {
   return array[randomIndex];
 }
 
+type PlotParameter = {
+  id: number,
+  name: string
+}
+
 export default function Home() {
 
-  const novelist = [
+  const novelist : PlotParameter[] = [
     {
       id: 1,
       name: '宮部みゆき'
@@ -58,13 +63,182 @@ export default function Home() {
       name: '川原礫'
     }
   ]
-  const [selectedNovelist, setSelectedNovelist] = useState(novelist[0])
+  const [selectedNovelist, setSelectedNovelist] = useState(novelist[0]);
+
+  const ganre : PlotParameter[] = [
+    {
+      id: 1,
+      name: 'ミステリー'
+    },
+    {
+      id: 2,
+      name: 'ファンタジー'
+    },
+    {
+      id: 3,
+      name: 'SF（科学小説）'
+    },
+    {
+      id: 4,
+      name: 'ロマンス小説'
+    },
+    {
+      id: 5,
+      name: '時代小説'
+    }
+  ]
+  const [selectedGenre, setSelectedGanre] = useState(ganre[0]);
+
+  const when : PlotParameter[] = [
+    {
+      id: 1,
+      name: '江戸時代'
+    },
+    {
+      id: 2,
+      name: '第二次世界大戦'
+    },
+    {
+      id: 3,
+      name: '近未来'
+    },
+    {
+      id: 4,
+      name: '現代'
+    },
+    {
+      id: 5,
+      name: '古代ローマ'
+    }
+  ]
+  const [selectedWhen, setSelectedWhen] = useState(when[0]);
+
+  const where : PlotParameter[] = [
+    {
+      id: 1,
+      name: '孤島'
+    },
+    {
+      id: 2,
+      name: '大都市'
+    },
+    {
+      id: 3,
+      name: '宇宙船'
+    },
+    {
+      id: 4,
+      name: '幻想的な王国'
+    },
+    {
+      id: 5,
+      name: '小さな村'
+    }
+  ]
+  const [selectedWhere, setSelectedWhere] = useState(where[0]);
+
+  const who : PlotParameter[] = [
+    {
+      id: 1,
+      name: '探偵'
+    },
+    {
+      id: 2,
+      name: '宇宙飛行士'
+    },
+    {
+      id: 3,
+      name: '時間旅行者'
+    },
+    {
+      id: 4,
+      name: '幼なじみ'
+    },
+    {
+      id: 5,
+      name: '忍者'
+    }
+  ]
+  const [selectedWho, setSelectedWho] = useState(who[0]);
+
+  const what : PlotParameter[] = [
+    {
+      id: 1,
+      name: '殺人事件の謎を解く'
+    },
+    {
+      id: 2,
+      name: '箱庭的世界を冒険する'
+    },
+    {
+      id: 3,
+      name: '未来世界を救う'
+    },
+    {
+      id: 4,
+      name: '禁断の恋に落ちる'
+    },
+    {
+      id: 5,
+      name: '秘宝を探す'
+    }
+  ]
+  const [selectedWhat, setSelectedWhat] = useState(what[0]);
+
+  const how : PlotParameter[] = [
+    {
+      id: 1,
+      name: '推理を駆使して'
+    },
+    {
+      id: 2,
+      name: '魔法と剣で戦いながら'
+    },
+    {
+      id: 3,
+      name: '時間を操りながら'
+    },
+    {
+      id: 4,
+      name: '危険な秘密を隠しながら'
+    },
+    {
+      id: 5,
+      name: '忠誠心と勇気をもって'
+    }
+  ]
+  const [selectedHow, setSelectedHow] = useState(how[0]);
+
+  const why : PlotParameter[] = [
+    {
+      id: 1,
+      name: '真相を明らかにするため'
+    },
+    {
+      id: 2,
+      name: '自分の過去を探るため'
+    },
+    {
+      id: 3,
+      name: '世界の破滅を防ぐため'
+    },
+    {
+      id: 4,
+      name: '真実の愛を見つけるため'
+    },
+    {
+      id: 5,
+      name: '家族の名誉を守るため'
+    }
+  ]
+  const [selectedWhy, setSelectedWhy] = useState(why[0]);
+
 
   function handleSubmit(e: SyntheticEvent) {
     const requestOptions ={
       method: 'POST',
       headers:{'Content-Type': 'application/json'},
-      body: JSON.stringify( {selectedNovelist})
+      body: JSON.stringify( {selectedNovelist, selectedGenre, selectedWhen, selectedWhere, selectedWho, selectedWhat, selectedHow, selectedWhy})
     };
     fetch('/api/plot.generate',requestOptions)
     e.preventDefault();
@@ -73,7 +247,13 @@ export default function Home() {
 
   function handleRandomize(e: SyntheticEvent) {
     setSelectedNovelist(getRandomElement(novelist));
-    console.log(selectedNovelist);
+    setSelectedGanre(getRandomElement(ganre));
+    setSelectedWhen(getRandomElement(when));
+    setSelectedWhere(getRandomElement(where));
+    setSelectedWho(getRandomElement(who));
+    setSelectedWhat(getRandomElement(what));
+    setSelectedHow(getRandomElement(how));
+    setSelectedWhy(getRandomElement(why));
     e.preventDefault();
     console.log('You clicked randomize.');
   }
@@ -173,35 +353,9 @@ export default function Home() {
               )}
             </Listbox>
           </div>
+          
 
-          <div className="sm:col-span-2">
-            <label htmlFor="company" className="block text-sm font-semibold leading-6 text-gray-900">
-              Company
-            </label>
-            <div className="mt-2.5">
-              <input
-                type="text"
-                name="company"
-                id="company"
-                autoComplete="organization"
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-          <div className="sm:col-span-2">
-            <label htmlFor="email" className="block text-sm font-semibold leading-6 text-gray-900">
-              Email
-            </label>
-            <div className="mt-2.5">
-              <input
-                type="email"
-                name="email"
-                id="email"
-                autoComplete="email"
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
+
         </div>
         <div className="mt-10">
           <button
