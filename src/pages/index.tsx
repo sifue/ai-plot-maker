@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -17,8 +16,8 @@ const inter = Inter({ subsets: ['latin'] })
   }
   ```
 */
-import { Fragment, useState, SyntheticEvent, Dispatch, SetStateAction} from 'react'
-import { CheckIcon, ChevronUpDownIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
+import { Fragment, useState, SyntheticEvent} from 'react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Listbox, Transition } from '@headlessui/react'
 
 function classNames(...classes: any[]) {
@@ -43,23 +42,23 @@ export default function Home() {
 
   const novelist : PlotParameter[] = [
     {
-      id: 1,
+      id: 101,
       name: '宮部みゆき'
     },
     {
-      id: 2,
+      id: 102,
       name: '村上春樹'
     },
     {
-      id: 3,
+      id: 103,
       name: '太宰治'
     },
     {
-      id: 4,
+      id: 104,
       name: 'ジョージ・オーウェル'
     },
     {
-      id: 5,
+      id: 105,
       name: '川原礫'
     }
   ]
@@ -67,23 +66,23 @@ export default function Home() {
 
   const ganre : PlotParameter[] = [
     {
-      id: 1,
+      id: 201,
       name: 'ミステリー'
     },
     {
-      id: 2,
+      id: 202,
       name: 'ファンタジー'
     },
     {
-      id: 3,
+      id: 203,
       name: 'SF（科学小説）'
     },
     {
-      id: 4,
+      id: 204,
       name: 'ロマンス小説'
     },
     {
-      id: 5,
+      id: 205,
       name: '時代小説'
     }
   ]
@@ -91,23 +90,23 @@ export default function Home() {
 
   const when : PlotParameter[] = [
     {
-      id: 1,
+      id: 301,
       name: '江戸時代'
     },
     {
-      id: 2,
+      id: 302,
       name: '第二次世界大戦'
     },
     {
-      id: 3,
+      id: 303,
       name: '近未来'
     },
     {
-      id: 4,
+      id: 304,
       name: '現代'
     },
     {
-      id: 5,
+      id: 305,
       name: '古代ローマ'
     }
   ]
@@ -115,23 +114,23 @@ export default function Home() {
 
   const where : PlotParameter[] = [
     {
-      id: 1,
+      id: 401,
       name: '孤島'
     },
     {
-      id: 2,
+      id: 402,
       name: '大都市'
     },
     {
-      id: 3,
+      id: 403,
       name: '宇宙船'
     },
     {
-      id: 4,
+      id: 404,
       name: '幻想的な王国'
     },
     {
-      id: 5,
+      id: 405,
       name: '小さな村'
     }
   ]
@@ -139,23 +138,23 @@ export default function Home() {
 
   const who : PlotParameter[] = [
     {
-      id: 1,
+      id: 501,
       name: '探偵'
     },
     {
-      id: 2,
+      id: 502,
       name: '宇宙飛行士'
     },
     {
-      id: 3,
+      id: 503,
       name: '時間旅行者'
     },
     {
-      id: 4,
+      id: 504,
       name: '幼なじみ'
     },
     {
-      id: 5,
+      id: 505,
       name: '忍者'
     }
   ]
@@ -163,23 +162,23 @@ export default function Home() {
 
   const what : PlotParameter[] = [
     {
-      id: 1,
+      id: 601,
       name: '殺人事件の謎を解く'
     },
     {
-      id: 2,
+      id: 602,
       name: '箱庭的世界を冒険する'
     },
     {
-      id: 3,
+      id: 603,
       name: '未来世界を救う'
     },
     {
-      id: 4,
+      id: 604,
       name: '禁断の恋に落ちる'
     },
     {
-      id: 5,
+      id: 605,
       name: '秘宝を探す'
     }
   ]
@@ -187,23 +186,23 @@ export default function Home() {
 
   const how : PlotParameter[] = [
     {
-      id: 1,
+      id: 701,
       name: '推理を駆使して'
     },
     {
-      id: 2,
+      id: 702,
       name: '魔法と剣で戦いながら'
     },
     {
-      id: 3,
+      id: 703,
       name: '時間を操りながら'
     },
     {
-      id: 4,
+      id: 704,
       name: '危険な秘密を隠しながら'
     },
     {
-      id: 5,
+      id: 705,
       name: '忠誠心と勇気をもって'
     }
   ]
@@ -211,23 +210,23 @@ export default function Home() {
 
   const why : PlotParameter[] = [
     {
-      id: 1,
+      id: 801,
       name: '真相を明らかにするため'
     },
     {
-      id: 2,
+      id: 802,
       name: '自分の過去を探るため'
     },
     {
-      id: 3,
+      id: 803,
       name: '世界の破滅を防ぐため'
     },
     {
-      id: 4,
+      id: 804,
       name: '真実の愛を見つけるため'
     },
     {
-      id: 5,
+      id: 805,
       name: '家族の名誉を守るため'
     }
   ]
@@ -256,6 +255,86 @@ export default function Home() {
     setSelectedWhy(getRandomElement(why));
     e.preventDefault();
     console.log('You clicked randomize.');
+  }
+
+  const listBoxProps = [
+    {selected: selectedNovelist, setSelected: setSelectedNovelist, parameters: novelist, label: '作風の元となる小説家'},
+    {selected: selectedGenre, setSelected: setSelectedGanre, parameters: ganre, label: 'ジャンル'},
+    {selected: selectedWhen, setSelected: setSelectedWhen, parameters: when, label: 'いつ'},
+    {selected: selectedWhere, setSelected: setSelectedWhere, parameters: where, label: 'どこ'},
+    {selected: selectedWho, setSelected: setSelectedWho, parameters: who, label: '誰が'},
+    {selected: selectedWhat, setSelected: setSelectedWhat, parameters: what, label: '何を'},
+    {selected: selectedHow, setSelected: setSelectedHow, parameters: how, label: 'どのように'},
+    {selected: selectedWhy, setSelected: setSelectedWhy, parameters: why, label: 'なぜ'}
+  ];
+
+  const listBoxList : JSX.Element[] = [];
+  for (const p of listBoxProps) {
+    listBoxList.push(
+      (<div className="sm:col-span-2">
+            <Listbox value={p.selected} onChange={p.setSelected}>
+              {({ open }) => (
+                <>
+                  <Listbox.Label className="block text-sm font-semibold leading-6 text-gray-900">{p.label}</Listbox.Label>
+                  <div className="relative mt-2">
+                    <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                      <span className="flex items-center">
+                        <span className="ml-3 block truncate">{p.selected.name}</span>
+                      </span>
+                      <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </span>
+                    </Listbox.Button>
+                    <Transition
+                      show={open}
+                      as={Fragment}
+                      leave="transition ease-in duration-100"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    >
+                      <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                        {p.parameters.map((item) => (
+                          <Listbox.Option
+                            key={item.id}
+                            className={({ active }) =>
+                              classNames(
+                                active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                                'relative cursor-default select-none py-2 pl-3 pr-9'
+                              )
+                            }
+                            value={item}
+                          >
+                            {({ selected, active }) => (
+                              <>
+                                <div className="flex items-center">
+                                  <span
+                                    className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
+                                  >
+                                    {item.name}
+                                  </span>
+                                </div>
+
+                                {selected ? (
+                                  <span
+                                    className={classNames(
+                                      active ? 'text-white' : 'text-indigo-600',
+                                      'absolute inset-y-0 right-0 flex items-center pr-4'
+                                    )}
+                                  >
+                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                  </span>
+                                ) : null}
+                              </>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </Transition>
+                  </div>
+                </>
+              )}
+            </Listbox>
+          </div>));
   }
 
   return (
@@ -289,72 +368,7 @@ export default function Home() {
       <form onSubmit={handleSubmit} action="#" method="POST" className="mx-auto mt-4 max-w-xl sm:mt-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
 
-          <div className="sm:col-span-2">
-            <Listbox value={selectedNovelist} onChange={setSelectedNovelist}>
-              {({ open }) => (
-                <>
-                  <Listbox.Label className="block text-sm font-semibold leading-6 text-gray-900">作風の元となる小説家</Listbox.Label>
-                  <div className="relative mt-2">
-                    <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
-                      <span className="flex items-center">
-                        <span className="ml-3 block truncate">{selectedNovelist.name}</span>
-                      </span>
-                      <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                      </span>
-                    </Listbox.Button>
-                    <Transition
-                      show={open}
-                      as={Fragment}
-                      leave="transition ease-in duration-100"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    >
-                      <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        {novelist.map((person) => (
-                          <Listbox.Option
-                            key={person.id}
-                            className={({ active }) =>
-                              classNames(
-                                active ? 'bg-indigo-600 text-white' : 'text-gray-900',
-                                'relative cursor-default select-none py-2 pl-3 pr-9'
-                              )
-                            }
-                            value={person}
-                          >
-                            {({ selected, active }) => (
-                              <>
-                                <div className="flex items-center">
-                                  <span
-                                    className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
-                                  >
-                                    {person.name}
-                                  </span>
-                                </div>
-
-                                {selected ? (
-                                  <span
-                                    className={classNames(
-                                      active ? 'text-white' : 'text-indigo-600',
-                                      'absolute inset-y-0 right-0 flex items-center pr-4'
-                                    )}
-                                  >
-                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                                  </span>
-                                ) : null}
-                              </>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </Transition>
-                  </div>
-                </>
-              )}
-            </Listbox>
-          </div>
-          
-
+        { listBoxList }
 
         </div>
         <div className="mt-10">
