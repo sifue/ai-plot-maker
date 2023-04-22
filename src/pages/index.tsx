@@ -1,4 +1,5 @@
 import { Inter } from 'next/font/google'
+import { useRouter } from 'next/router'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -232,7 +233,7 @@ export default function Home() {
   ]
   const [selectedWhy, setSelectedWhy] = useState(why[0]);
 
-
+  const router = useRouter()
   function handleSubmit(e: SyntheticEvent) {
     const requestOptions ={
       method: 'POST',
@@ -242,6 +243,7 @@ export default function Home() {
     fetch('/api/plot.generate',requestOptions)
     e.preventDefault();
     console.log('You clicked submit.');
+    router.push('/output');
   }
 
   function handleRandomize(e: SyntheticEvent) {
@@ -338,7 +340,7 @@ export default function Home() {
   }
 
   return (
-    <div className="isolate bg-white px-24 py-24 sm:py-24 lg:px-8">
+    <div className="isolate bg-white px-24 py-12 sm:py-12 lg:px-8">
       <div
         className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
         aria-hidden="true"
