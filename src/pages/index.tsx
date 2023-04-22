@@ -42,23 +42,23 @@ export default function Home() {
 
   const novelist : PlotParameter[] = [
     {
-      id: 101,
+      id: 1,
       name: '宮部みゆき'
     },
     {
-      id: 102,
+      id: 2,
       name: '村上春樹'
     },
     {
-      id: 103,
+      id: 3,
       name: '太宰治'
     },
     {
-      id: 104,
+      id: 4,
       name: 'ジョージ・オーウェル'
     },
     {
-      id: 105,
+      id: 5,
       name: '川原礫'
     }
   ]
@@ -66,23 +66,23 @@ export default function Home() {
 
   const ganre : PlotParameter[] = [
     {
-      id: 201,
+      id: 1,
       name: 'ミステリー'
     },
     {
-      id: 202,
+      id: 2,
       name: 'ファンタジー'
     },
     {
-      id: 203,
+      id: 3,
       name: 'SF（科学小説）'
     },
     {
-      id: 204,
+      id: 4,
       name: 'ロマンス小説'
     },
     {
-      id: 205,
+      id: 5,
       name: '時代小説'
     }
   ]
@@ -90,23 +90,23 @@ export default function Home() {
 
   const when : PlotParameter[] = [
     {
-      id: 301,
+      id: 1,
       name: '江戸時代'
     },
     {
-      id: 302,
+      id: 2,
       name: '第二次世界大戦'
     },
     {
-      id: 303,
+      id: 3,
       name: '近未来'
     },
     {
-      id: 304,
+      id: 4,
       name: '現代'
     },
     {
-      id: 305,
+      id: 5,
       name: '古代ローマ'
     }
   ]
@@ -114,23 +114,23 @@ export default function Home() {
 
   const where : PlotParameter[] = [
     {
-      id: 401,
+      id: 1,
       name: '孤島'
     },
     {
-      id: 402,
+      id: 2,
       name: '大都市'
     },
     {
-      id: 403,
+      id: 3,
       name: '宇宙船'
     },
     {
-      id: 404,
+      id: 4,
       name: '幻想的な王国'
     },
     {
-      id: 405,
+      id: 5,
       name: '小さな村'
     }
   ]
@@ -138,23 +138,23 @@ export default function Home() {
 
   const who : PlotParameter[] = [
     {
-      id: 501,
+      id: 1,
       name: '探偵'
     },
     {
-      id: 502,
+      id: 2,
       name: '宇宙飛行士'
     },
     {
-      id: 503,
+      id: 3,
       name: '時間旅行者'
     },
     {
-      id: 504,
+      id: 4,
       name: '幼なじみ'
     },
     {
-      id: 505,
+      id: 5,
       name: '忍者'
     }
   ]
@@ -162,23 +162,23 @@ export default function Home() {
 
   const what : PlotParameter[] = [
     {
-      id: 601,
+      id: 1,
       name: '殺人事件の謎を解く'
     },
     {
-      id: 602,
+      id: 2,
       name: '箱庭的世界を冒険する'
     },
     {
-      id: 603,
+      id: 3,
       name: '未来世界を救う'
     },
     {
-      id: 604,
+      id: 4,
       name: '禁断の恋に落ちる'
     },
     {
-      id: 605,
+      id: 5,
       name: '秘宝を探す'
     }
   ]
@@ -186,23 +186,23 @@ export default function Home() {
 
   const how : PlotParameter[] = [
     {
-      id: 701,
+      id: 1,
       name: '推理を駆使して'
     },
     {
-      id: 702,
+      id: 2,
       name: '魔法と剣で戦いながら'
     },
     {
-      id: 703,
+      id: 3,
       name: '時間を操りながら'
     },
     {
-      id: 704,
+      id: 4,
       name: '危険な秘密を隠しながら'
     },
     {
-      id: 705,
+      id: 5,
       name: '忠誠心と勇気をもって'
     }
   ]
@@ -210,23 +210,23 @@ export default function Home() {
 
   const why : PlotParameter[] = [
     {
-      id: 801,
+      id: 1,
       name: '真相を明らかにするため'
     },
     {
-      id: 802,
+      id: 2,
       name: '自分の過去を探るため'
     },
     {
-      id: 803,
+      id: 3,
       name: '世界の破滅を防ぐため'
     },
     {
-      id: 804,
+      id: 4,
       name: '真実の愛を見つけるため'
     },
     {
-      id: 805,
+      id: 5,
       name: '家族の名誉を守るため'
     }
   ]
@@ -258,20 +258,20 @@ export default function Home() {
   }
 
   const listBoxProps = [
-    {selected: selectedNovelist, setSelected: setSelectedNovelist, parameters: novelist, label: '作風の元となる小説家'},
-    {selected: selectedGenre, setSelected: setSelectedGanre, parameters: ganre, label: 'ジャンル'},
-    {selected: selectedWhen, setSelected: setSelectedWhen, parameters: when, label: 'いつ'},
-    {selected: selectedWhere, setSelected: setSelectedWhere, parameters: where, label: 'どこ'},
-    {selected: selectedWho, setSelected: setSelectedWho, parameters: who, label: '誰が'},
-    {selected: selectedWhat, setSelected: setSelectedWhat, parameters: what, label: '何を'},
-    {selected: selectedHow, setSelected: setSelectedHow, parameters: how, label: 'どのように'},
-    {selected: selectedWhy, setSelected: setSelectedWhy, parameters: why, label: 'なぜ'}
+    {key:'novelist', selected: selectedNovelist, setSelected: setSelectedNovelist, parameters: novelist, label: '作風の元となる小説家'},
+    {key:'ganre', selected: selectedGenre, setSelected: setSelectedGanre, parameters: ganre, label: 'ジャンル'},
+    {key:'when', selected: selectedWhen, setSelected: setSelectedWhen, parameters: when, label: 'いつ'},
+    {key:'where', selected: selectedWhere, setSelected: setSelectedWhere, parameters: where, label: 'どこ'},
+    {key:'who', selected: selectedWho, setSelected: setSelectedWho, parameters: who, label: '誰が'},
+    {key:'what', selected: selectedWhat, setSelected: setSelectedWhat, parameters: what, label: '何を'},
+    {key:'how', selected: selectedHow, setSelected: setSelectedHow, parameters: how, label: 'どのように'},
+    {key:'why', selected: selectedWhy, setSelected: setSelectedWhy, parameters: why, label: 'なぜ'}
   ];
 
   const listBoxList : JSX.Element[] = [];
   for (const p of listBoxProps) {
     listBoxList.push(
-      (<div className="sm:col-span-2">
+      (<div className="sm:col-span-2" key={p.key}>
             <Listbox value={p.selected} onChange={p.setSelected}>
               {({ open }) => (
                 <>
@@ -352,9 +352,9 @@ export default function Home() {
         />
       </div>
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">AIプロンプトメーカー</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">AIプロットメーカー</h2>
         <p className="mt-2 text-lg leading-8 text-gray-600">
-          ChatGPTで、起承転結の物語のプロットをお手軽作成
+          起承転結の物語のプロットをお手軽作成
         </p>
       </div>
 
