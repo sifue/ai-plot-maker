@@ -103,7 +103,7 @@ export default async function handler(
  - 時間
  - 起こる出来事
   
-以上を明記してください。
+以上を明記してください。また必ず一幕のシーン数は必ず1シーンとなるようにしてください。
   
 以下の設定にて、三幕構成の物語のプロットを作成してください。
   
@@ -138,7 +138,7 @@ export default async function handler(
  - 場所:
  - 時間:
  - 起こる出来事:
-  `;
+`;
 
   const start = new Date();
   console.log(`(${start.toISOString()}) prompt:`);
