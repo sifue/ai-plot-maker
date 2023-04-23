@@ -63,14 +63,7 @@ export default function Home() {
 
   const router = useRouter()
   function handleSubmit(e: SyntheticEvent) {
-
     const query = { selectedNovelist: selectedNovelist.id, selectedGenre: selectedGenre.id, selectedWhen: selectedWhen.id, selectedWhere: selectedWhere.id, selectedWho: selectedWho.id, selectedWhat: selectedWhat.id, selectedHow: selectedHow.id, selectedWhy: selectedWhy.id };
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(query)
-    };
-    fetch('/api/plot.generate', requestOptions)
     e.preventDefault();
     console.log('You clicked submit.');
     router.push({ pathname: '/output', query: query });
