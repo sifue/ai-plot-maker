@@ -276,7 +276,7 @@ export const PARAMETERS: {
     },
     {
       id: 3,
-      name: 'ディスカバリーチャンネル風に観察をしながら'
+      name: '状況をつぶさに観察をしながら'
     },
     {
       id: 4,
