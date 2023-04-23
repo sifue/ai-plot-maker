@@ -40,8 +40,8 @@ export default function Home() {
   const novelist = PARAMETERS.novelist;
   const [selectedNovelist, setSelectedNovelist] = useState(novelist[0]);
 
-  const ganre = PARAMETERS.ganre;
-  const [selectedGenre, setSelectedGanre] = useState(ganre[0]);
+  const genre = PARAMETERS.genre;
+  const [selectedGenre, setSelectedGenre] = useState(genre[0]);
 
   const when = PARAMETERS.when;
   const [selectedWhen, setSelectedWhen] = useState(when[0]);
@@ -63,15 +63,14 @@ export default function Home() {
 
   const router = useRouter()
   function handleSubmit(e: SyntheticEvent) {
-    const query = { selectedNovelist: selectedNovelist.id, selectedGenre: selectedGenre.id, selectedWhen: selectedWhen.id, selectedWhere: selectedWhere.id, selectedWho: selectedWho.id, selectedWhat: selectedWhat.id, selectedHow: selectedHow.id, selectedWhy: selectedWhy.id };
+    const query = { novelist: selectedNovelist.id, genre: selectedGenre.id, when: selectedWhen.id, where: selectedWhere.id, who: selectedWho.id, what: selectedWhat.id, how: selectedHow.id, why: selectedWhy.id };
     e.preventDefault();
-    console.log('You clicked submit.');
     router.push({ pathname: '/output', query: query });
   }
 
   function handleRandomize(e: SyntheticEvent) {
     setSelectedNovelist(getRandomElement(novelist));
-    setSelectedGanre(getRandomElement(ganre));
+    setSelectedGenre(getRandomElement(genre));
     setSelectedWhen(getRandomElement(when));
     setSelectedWhere(getRandomElement(where));
     setSelectedWho(getRandomElement(who));
@@ -79,12 +78,11 @@ export default function Home() {
     setSelectedHow(getRandomElement(how));
     setSelectedWhy(getRandomElement(why));
     e.preventDefault();
-    console.log('You clicked randomize.');
   }
 
   const listBoxProps = [
     { key: 'novelist', selected: selectedNovelist, setSelected: setSelectedNovelist, parameters: novelist, label: '作風の元となる小説家' },
-    { key: 'ganre', selected: selectedGenre, setSelected: setSelectedGanre, parameters: ganre, label: 'ジャンル' },
+    { key: 'genre', selected: selectedGenre, setSelected: setSelectedGenre, parameters: genre, label: 'ジャンル' },
     { key: 'when', selected: selectedWhen, setSelected: setSelectedWhen, parameters: when, label: 'いつ' },
     { key: 'where', selected: selectedWhere, setSelected: setSelectedWhere, parameters: where, label: 'どこ' },
     { key: 'who', selected: selectedWho, setSelected: setSelectedWho, parameters: who, label: '誰が' },

@@ -5,7 +5,7 @@ export type PlotParameter = {
 
 export const PARAMETERS: {
   novelist: PlotParameter[],
-  ganre: PlotParameter[],
+  genre: PlotParameter[],
   when: PlotParameter[],
   where: PlotParameter[],
   who: PlotParameter[],
@@ -35,7 +35,7 @@ export const PARAMETERS: {
       name: '川原礫'
     }
   ],
-  ganre: [
+  genre: [
     {
       id: 1,
       name: 'ミステリー'

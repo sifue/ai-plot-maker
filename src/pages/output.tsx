@@ -11,22 +11,21 @@ type OutputState = {
 
 type ApiResponse = {
     parmeters: {
-        selectedNovelist: string,
-        selectedGenre: string,
-        selectedWhen: string,
-        selectedWhere: string,
-        selectedWho: string,
-        selectedWhat: string,
-        selectedHow: string,
-        selectedWhy: string
+        novelist: string,
+        genre: string,
+        when: string,
+        where: string,
+        who: string,
+        what: string,
+        how: string,
+        why: string
       },
     plot: string
 }
 
 export default function Output() {
 
-    const [state, setState] = useState<OutputState>({ isPlotGenerated: false, label: '作成中...', plot: '' } as OutputState);
-
+    const [state, setState] = useState<OutputState>({ isPlotGenerated: false, label: '作成中、数秒お待ちください', plot: '' } as OutputState);
     const router = useRouter();
 
     useEffect(() => {
@@ -40,7 +39,6 @@ export default function Output() {
 
             const response = await fetch('/api/plot.generate', requestOptions);
             const jsonResponse: ApiResponse = await response.json();
-            console.log(jsonResponse);
             setState({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: jsonResponse.plot });
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -93,7 +91,7 @@ export default function Output() {
                         visible={true}
                     /></div>) : (<></>)}
                     
-                    <p className="mt-6 text-xl leading-10 text-gray-700 py-4">
+                    <p className="mt-6 text-xl leading-10 text-gray-700 py-4 break-words">
                         {state.plot}
                     </p>
                     <p className="text-base font-semibold leading-7 text-indigo-600"><Link href="/">戻る</Link></p>
