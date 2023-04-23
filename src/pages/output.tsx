@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ThreeDots } from 'react-loader-spinner'
 
 export default function Output() {
     return (
@@ -34,7 +35,16 @@ export default function Output() {
                 <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-x-8 px-8">
 
                     <p className="text-base font-semibold leading-7 text-indigo-600"><Link href="/">戻る</Link></p>
-                    <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">AIプロットメーカーの出力結果</h1>
+                    <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">作成中...</h1>
+                    <ThreeDots
+                        height="80"
+                        width="80"
+                        radius="9"
+                        color="#4f46e5"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        visible={true}
+                    />
                     <p className="mt-6 text-xl leading-8 text-gray-700">
                         Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam
                         eget aliquam. Quisque id at vitae feugiat egestas.

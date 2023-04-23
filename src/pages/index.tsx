@@ -362,7 +362,7 @@ export default function Home() {
 
       <div className="mx-auto mt-4 text-right">
         <button
-              onClick={handleRandomize} className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={handleRandomize} className="rounded-md bg-violet-600 px-3.5 py-2.5 text-center text-xs font-semibold text-white shadow-sm hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
             >
               ランダム化
         </button>
