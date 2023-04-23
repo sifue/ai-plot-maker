@@ -41,7 +41,7 @@ function getNameFromId(parameter: PlotParameter[], id: string) {
 }
 
 export default function Output() {
-    const [state, setState] = useState<OutputState>({ isPlotGenerated: false, label: '作成中です、しばらくお待ちください', plot: '' } as OutputState);
+    const [state, setState] = useState<OutputState>({ isPlotGenerated: false, label: '作成中です、数十秒お待ちください', plot: '' } as OutputState);
     const router = useRouter();
     const nps = { ...router.query };
     transformIdToName(nps);
@@ -64,6 +64,7 @@ export default function Output() {
                 setState({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: jsonResponse.plot });
             } catch (error) {
                 console.error('Error fetching data:', error);
+                setState({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: 'エラーが発生しました。再読み込みを行って再度実行してください。' });
             }
         };
         fetchData();

@@ -90,9 +90,12 @@ export default async function handler(
   const openai = new OpenAIApi(configuration);
   const prompt = `あなたは、小説家の${nps.novelist}です。これから以下の設定で物語のプロットを作成してください。
 
-  「プロットは、起承転結の4シーンを作成してください。必ず「起」のシーンでは導入をすること、「転」のシーンではクライマックスを迎えること、「結」のシーンでは物語の結末を明らかににするように構成してください。
+  プロットは、第一幕「設定」・第二幕「対立」・第三幕「解決」の三幕構成で作成してください。
+  第一幕では導入を行い、誰が、何をするストーリーであるのかが設定され、主人公の目的が明示されるようにしてください。
+  第二幕では主人公が自らの目的を達成するためにその障害と対立、衝突するようにし、第二幕の後半には、主人公が敗北の寸前まで追いつめられるようにしてください。
+  第三幕ではストーリーの問い、すなわち「主人公は目的を達成できるのか？」という問いに対する答えが明かされ、その問題が解決されるようにしてください。
   
-  各4シーンの内容は、
+  各幕の内容は、
   
   - シーン名
   - 登場人物
@@ -100,12 +103,10 @@ export default async function handler(
   - 時間
   - 天候
   - 起こる出来事
-  - シーンの目的
-  - 書いておくべき情報・伏線
   
   以上を明記してください。
   
-  以下の物語の設定にて、起承転結の4つのシーンのプロットを作成してください。
+  以下の設定にて、三幕構成の物語のプロットを作成してください。
   
   ジャンル: ${nps.genre}
   いつ（When）：  ${nps.when}
@@ -115,7 +116,8 @@ export default async function handler(
   どのように（How）： ${nps.how}
   なぜ（Why）： ${nps.why}`;
 
-  console.log('prompt:');
+  const start = new Date();
+  console.log(`(${start.toISOString()}) prompt:`);
   console.log(prompt);
 
   if (isUseSamplePlot) {
@@ -130,11 +132,13 @@ export default async function handler(
     const completion = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
+      max_tokens: 680,
     });
 
     const plot = completion.data.choices[0].message?.content ?? '';
 
-    console.log('plot:');
+    const end = new Date();
+    console.log(`(${end.toISOString()}) plot(${Math.ceil((end.getTime() - start.getTime()) / 1000)}秒):`);
     console.log(plot);
 
     res.status(200).json({
