@@ -134,6 +134,9 @@ export default async function handler(
 
     const plot = completion.data.choices[0].message?.content ?? '';
 
+    console.log('plot:');
+    console.log(plot);
+
     res.status(200).json({
       parmeters: req.body,
       plot: plot
