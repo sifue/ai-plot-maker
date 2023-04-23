@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Configuration, OpenAIApi} from 'openai'
+import { Configuration, OpenAIApi } from 'openai'
 
 import { PlotParameter, PARAMETERS } from '../../components/parameters'
 
@@ -15,7 +15,7 @@ type ApiResponse = {
     how: string,
     why: string
   },
-plot: string
+  plot: string
 }
 
 function transformIdToName(idParameters: any) {
@@ -30,7 +30,7 @@ function transformIdToName(idParameters: any) {
 }
 
 function getNameFromId(parameter: PlotParameter[], id: string) {
-  return  parameter.find((p) => p.id === parseInt(id))?.name
+  return parameter.find((p) => p.id === parseInt(id))?.name
 }
 
 const isUseSamplePlot = false; // デバッグ用 (OpenAI APIにたくさんリクエストを送ってしまうため)
@@ -81,7 +81,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse>
 ) {
-  const nps = {...(req.body)};
+  const nps = { ...(req.body) };
   transformIdToName(nps);
 
   const configuration = new Configuration({
@@ -115,7 +115,10 @@ export default async function handler(
   どのように（How）： ${nps.how}
   なぜ（Why）： ${nps.why}`;
 
-  if(isUseSamplePlot) {
+  console.log('prompt:');
+  console.log(prompt);
+
+  if (isUseSamplePlot) {
     res.status(200).json({
       parmeters: req.body,
       plot: PLOT_SAMPLE
@@ -123,15 +126,26 @@ export default async function handler(
     return;
   }
 
-  const completion = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
-    messages: [{role: 'user', content: prompt}],
-  });
+  try {
+    const completion = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: prompt }],
+    });
 
-  const plot = completion.data.choices[0].message?.content ?? '';
-  res.status(200).json({
-    parmeters: req.body,
-    plot: plot
-  })
+    const plot = completion.data.choices[0].message?.content ?? '';
+
+    res.status(200).json({
+      parmeters: req.body,
+      plot: plot
+    })
+
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      parmeters: req.body,
+      plot: 'エラーが発生しました。'
+    })
+    return;
+  }
 }
 
