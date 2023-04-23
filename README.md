@@ -10,7 +10,23 @@ OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 このようにOpneAIのAPIキーを設定。
 
-Vercelでは環境変数 `OPENAI_API_KEY` を設定の事。
+## デプロイ
+[Firebaseでのデプロイ](https://firebase.google.com/docs/hosting/nextjs?hl=ja)を想定。プランは従量制のBlaze以上である必要がある。
+
+Windowsでのログイン時の注意。
+
+```
+PowerShell -ExecutionPolicy RemoteSigned firebase login
+```
+
+のように、`PowerShell -ExecutionPolicy RemoteSigned`を付けないとログインやデプロイできない。
+```
+PowerShell -ExecutionPolicy RemoteSigned firebase experiments:enable webframeworks
+PowerShell -ExecutionPolicy RemoteSigned firebase deploy
+```
+
+これで静的サイトをデプロイする。デプロイは、ローカルですることを前提。
+
 
 # Next.jsプロジェクトの利用方法
 

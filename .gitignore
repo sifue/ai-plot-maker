@@ -34,5 +34,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# firebase
+# firebase build and logs and certs
 firebase-serviceAccount.json
+firebase-debug.log
+.firebase/
+firebase.json
+.firebaserc
