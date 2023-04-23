@@ -115,9 +115,6 @@ export default async function handler(
   どのように（How）： ${nps.how}
   なぜ（Why）： ${nps.why}`;
 
-  console.log('prompt:');
-  console.log(prompt);
-
   if(isUseSamplePlot) {
     res.status(200).json({
       parmeters: req.body,
@@ -132,9 +129,6 @@ export default async function handler(
   });
 
   const plot = completion.data.choices[0].message?.content ?? '';
-  console.log('plot:');
-  console.log(plot);
-
   res.status(200).json({
     parmeters: req.body,
     plot: plot
