@@ -101,7 +101,6 @@ export default async function handler(
  - 登場人物
  - 場所
  - 時間
- - 天候
  - 起こる出来事
   
 以上を明記してください。
@@ -124,7 +123,6 @@ export default async function handler(
  - 登場人物:
  - 場所:
  - 時間:
- - 天候:
  - 起こる出来事:
 
  # 第二幕
@@ -132,7 +130,6 @@ export default async function handler(
  - 登場人物:
  - 場所:
  - 時間:
- - 天候:
  - 起こる出来事:
 
  # 第三幕
@@ -140,7 +137,6 @@ export default async function handler(
  - 登場人物:
  - 場所:
  - 時間:
- - 天候:
  - 起こる出来事:
   `;
 
@@ -160,7 +156,7 @@ export default async function handler(
     const completion = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 640,
+      max_tokens: 660,
     });
 
     const plot = completion.data.choices[0].message?.content ?? '';
