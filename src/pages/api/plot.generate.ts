@@ -37,10 +37,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse>
 ) {
-
-  console.log(PARAMETERS);
-  console.log(req.body);
-
   const nps = {...(req.body)};
   transformIdToName(nps);
 

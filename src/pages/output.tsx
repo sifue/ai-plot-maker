@@ -24,11 +24,11 @@ type ApiResponse = {
 }
 
 export default function Output() {
-
-    const [state, setState] = useState<OutputState>({ isPlotGenerated: false, label: '作成中、数秒お待ちください', plot: '' } as OutputState);
+    const [state, setState] = useState<OutputState>({ isPlotGenerated: false, label: '作成中です、しばらくお待ちください', plot: '' } as OutputState);
     const router = useRouter();
 
     useEffect(() => {
+        if (typeof window === "undefined") return; // サーバーサイドレンダリング時には実行しない
         const fetchData = async () => {
           try {
             const requestOptions = {
@@ -77,11 +77,11 @@ export default function Output() {
             </div>
             <div className="mx-auto gap-x-8 gap-y-16">
 
-                <div className="mx-auto w-full max-w-3xl  gap-x-8 px-8">
+                <div className="mx-auto w-full max-w-3xl gap-x-8 px-8">
 
                     <p className="text-base font-semibold leading-7 text-indigo-600"><Link href="/">戻る</Link></p>
                     <h1 className="mt-5 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">{state.label}</h1>
-                    { !state.isPlotGenerated ? (<div className='w-full h-full flex h-40 items-center justify-center'><ThreeDots
+                    { !state.isPlotGenerated ? (<div className='w-full h-full flex h-40 py-10 items-center justify-center'><ThreeDots
                         height="80"
                         width="80"
                         radius="9"
