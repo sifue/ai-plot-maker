@@ -10,6 +10,8 @@ OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 このようにOpneAIのAPIキーを設定。
 
+Vercelでは環境変数 `OPENAI_API_KEY` を設定の事。
+
 # Next.jsプロジェクトの利用方法
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
