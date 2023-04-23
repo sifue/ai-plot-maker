@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Fragment, useState, SyntheticEvent } from 'react'
+import React, { Fragment, useState, useEffect, SyntheticEvent } from 'react'
 import { useRouter } from "next/router";
 import { ThreeDots } from 'react-loader-spinner'
 
@@ -9,22 +9,45 @@ type OutputState = {
     plot: string,
 }
 
+type ApiResponse = {
+    parmeters: {
+        selectedNovelist: string,
+        selectedGenre: string,
+        selectedWhen: string,
+        selectedWhere: string,
+        selectedWho: string,
+        selectedWhat: string,
+        selectedHow: string,
+        selectedWhy: string
+      },
+    plot: string
+}
 
 export default function Output() {
 
-    const [state, setState] = useState({ isPlotGenerated: false, label: '作成中...', plot: '' } as OutputState);
+    const [state, setState] = useState<OutputState>({ isPlotGenerated: false, label: '作成中...', plot: '' } as OutputState);
 
     const router = useRouter();
 
-    async function generatePlot() {
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(router.query)
-          };
-        await fetch('/api/plot.generate', requestOptions)
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(router.query)
+            };
 
-    }
+            const response = await fetch('/api/plot.generate', requestOptions);
+            const jsonResponse: ApiResponse = await response.json();
+            console.log(jsonResponse);
+            setState({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: jsonResponse.plot });
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+        fetchData();
+      }, []);
 
     return (
         <div className="relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
@@ -54,13 +77,13 @@ export default function Output() {
                     <rect width="100%" height="100%" strokeWidth={0} fill="url(#e813992c-7d03-4cc4-a2bd-151760b470a0)" />
                 </svg>
             </div>
-            <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16">
+            <div className="mx-auto gap-x-8 gap-y-16">
 
-                <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-x-8 px-8">
+                <div className="mx-auto w-full max-w-3xl  gap-x-8 px-8">
 
                     <p className="text-base font-semibold leading-7 text-indigo-600"><Link href="/">戻る</Link></p>
-                    <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{state.label}</h1>
-                    { !state.isPlotGenerated ? (<ThreeDots
+                    <h1 className="mt-5 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">{state.label}</h1>
+                    { !state.isPlotGenerated ? (<div className='w-full h-full flex h-40 items-center justify-center'><ThreeDots
                         height="80"
                         width="80"
                         radius="9"
@@ -68,18 +91,12 @@ export default function Output() {
                         ariaLabel="three-dots-loading"
                         wrapperStyle={{}}
                         visible={true}
-                    />) : (<></>)}
+                    /></div>) : (<></>)}
                     
-                    <p className="mt-6 text-xl leading-8 text-gray-700">
-                        Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam
-                        eget aliquam. Quisque id at vitae feugiat egestas.
+                    <p className="mt-6 text-xl leading-10 text-gray-700 py-4">
+                        {state.plot}
                     </p>
-                    <p>
-                        Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet
-                        vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque
-                        erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris
-                        semper sed amet vitae sed turpis id.
-                    </p>
+                    <p className="text-base font-semibold leading-7 text-indigo-600"><Link href="/">戻る</Link></p>
                 </div>
             </div>
         </div>
