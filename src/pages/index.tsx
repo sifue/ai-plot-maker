@@ -1,6 +1,8 @@
 import { Inter } from 'next/font/google'
 import { useRouter } from 'next/router'
 
+import { PlotParameter, PARAMETERS } from '../components/parameters'
+
 const inter = Inter({ subsets: ['latin'] })
 
 /*
@@ -17,7 +19,7 @@ const inter = Inter({ subsets: ['latin'] })
   }
   ```
 */
-import { Fragment, useState, SyntheticEvent} from 'react'
+import { Fragment, useState, SyntheticEvent } from 'react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Listbox, Transition } from '@headlessui/react'
 
@@ -34,216 +36,44 @@ function getRandomElement<T>(array: T[]): T {
   return array[randomIndex];
 }
 
-type PlotParameter = {
-  id: number,
-  name: string
-}
-
 export default function Home() {
-
-  const novelist : PlotParameter[] = [
-    {
-      id: 1,
-      name: '宮部みゆき'
-    },
-    {
-      id: 2,
-      name: '村上春樹'
-    },
-    {
-      id: 3,
-      name: '太宰治'
-    },
-    {
-      id: 4,
-      name: 'ジョージ・オーウェル'
-    },
-    {
-      id: 5,
-      name: '川原礫'
-    }
-  ]
+  const novelist = PARAMETERS.novelist;
   const [selectedNovelist, setSelectedNovelist] = useState(novelist[0]);
 
-  const ganre : PlotParameter[] = [
-    {
-      id: 1,
-      name: 'ミステリー'
-    },
-    {
-      id: 2,
-      name: 'ファンタジー'
-    },
-    {
-      id: 3,
-      name: 'SF（科学小説）'
-    },
-    {
-      id: 4,
-      name: 'ロマンス小説'
-    },
-    {
-      id: 5,
-      name: '時代小説'
-    }
-  ]
+  const ganre = PARAMETERS.ganre;
   const [selectedGenre, setSelectedGanre] = useState(ganre[0]);
 
-  const when : PlotParameter[] = [
-    {
-      id: 1,
-      name: '江戸時代'
-    },
-    {
-      id: 2,
-      name: '第二次世界大戦'
-    },
-    {
-      id: 3,
-      name: '近未来'
-    },
-    {
-      id: 4,
-      name: '現代'
-    },
-    {
-      id: 5,
-      name: '古代ローマ'
-    }
-  ]
+  const when = PARAMETERS.when;
   const [selectedWhen, setSelectedWhen] = useState(when[0]);
 
-  const where : PlotParameter[] = [
-    {
-      id: 1,
-      name: '孤島'
-    },
-    {
-      id: 2,
-      name: '大都市'
-    },
-    {
-      id: 3,
-      name: '宇宙船'
-    },
-    {
-      id: 4,
-      name: '幻想的な王国'
-    },
-    {
-      id: 5,
-      name: '小さな村'
-    }
-  ]
+  const where = PARAMETERS.where;
   const [selectedWhere, setSelectedWhere] = useState(where[0]);
 
-  const who : PlotParameter[] = [
-    {
-      id: 1,
-      name: '探偵'
-    },
-    {
-      id: 2,
-      name: '宇宙飛行士'
-    },
-    {
-      id: 3,
-      name: '時間旅行者'
-    },
-    {
-      id: 4,
-      name: '幼なじみ'
-    },
-    {
-      id: 5,
-      name: '忍者'
-    }
-  ]
+  const who = PARAMETERS.who;
   const [selectedWho, setSelectedWho] = useState(who[0]);
 
-  const what : PlotParameter[] = [
-    {
-      id: 1,
-      name: '殺人事件の謎を解く'
-    },
-    {
-      id: 2,
-      name: '箱庭的世界を冒険する'
-    },
-    {
-      id: 3,
-      name: '未来世界を救う'
-    },
-    {
-      id: 4,
-      name: '禁断の恋に落ちる'
-    },
-    {
-      id: 5,
-      name: '秘宝を探す'
-    }
-  ]
+  const what = PARAMETERS.what;
   const [selectedWhat, setSelectedWhat] = useState(what[0]);
 
-  const how : PlotParameter[] = [
-    {
-      id: 1,
-      name: '推理を駆使して'
-    },
-    {
-      id: 2,
-      name: '魔法と剣で戦いながら'
-    },
-    {
-      id: 3,
-      name: '時間を操りながら'
-    },
-    {
-      id: 4,
-      name: '危険な秘密を隠しながら'
-    },
-    {
-      id: 5,
-      name: '忠誠心と勇気をもって'
-    }
-  ]
+  const how = PARAMETERS.how;
   const [selectedHow, setSelectedHow] = useState(how[0]);
 
-  const why : PlotParameter[] = [
-    {
-      id: 1,
-      name: '真相を明らかにするため'
-    },
-    {
-      id: 2,
-      name: '自分の過去を探るため'
-    },
-    {
-      id: 3,
-      name: '世界の破滅を防ぐため'
-    },
-    {
-      id: 4,
-      name: '真実の愛を見つけるため'
-    },
-    {
-      id: 5,
-      name: '家族の名誉を守るため'
-    }
-  ]
+  const why = PARAMETERS.why;
   const [selectedWhy, setSelectedWhy] = useState(why[0]);
 
   const router = useRouter()
   function handleSubmit(e: SyntheticEvent) {
-    const requestOptions ={
+
+    const query = { selectedNovelist: selectedNovelist.id, selectedGenre: selectedGenre.id, selectedWhen: selectedWhen.id, selectedWhere: selectedWhere.id, selectedWho: selectedWho.id, selectedWhat: selectedWhat.id, selectedHow: selectedHow.id, selectedWhy: selectedWhy.id };
+    const requestOptions = {
       method: 'POST',
-      headers:{'Content-Type': 'application/json'},
-      body: JSON.stringify( {selectedNovelist, selectedGenre, selectedWhen, selectedWhere, selectedWho, selectedWhat, selectedHow, selectedWhy})
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(query)
     };
-    fetch('/api/plot.generate',requestOptions)
+    fetch('/api/plot.generate', requestOptions)
     e.preventDefault();
     console.log('You clicked submit.');
-    router.push('/output');
+    router.push({ pathname: '/output', query: query });
   }
 
   function handleRandomize(e: SyntheticEvent) {
@@ -260,83 +90,83 @@ export default function Home() {
   }
 
   const listBoxProps = [
-    {key:'novelist', selected: selectedNovelist, setSelected: setSelectedNovelist, parameters: novelist, label: '作風の元となる小説家'},
-    {key:'ganre', selected: selectedGenre, setSelected: setSelectedGanre, parameters: ganre, label: 'ジャンル'},
-    {key:'when', selected: selectedWhen, setSelected: setSelectedWhen, parameters: when, label: 'いつ'},
-    {key:'where', selected: selectedWhere, setSelected: setSelectedWhere, parameters: where, label: 'どこ'},
-    {key:'who', selected: selectedWho, setSelected: setSelectedWho, parameters: who, label: '誰が'},
-    {key:'what', selected: selectedWhat, setSelected: setSelectedWhat, parameters: what, label: '何を'},
-    {key:'how', selected: selectedHow, setSelected: setSelectedHow, parameters: how, label: 'どのように'},
-    {key:'why', selected: selectedWhy, setSelected: setSelectedWhy, parameters: why, label: 'なぜ'}
+    { key: 'novelist', selected: selectedNovelist, setSelected: setSelectedNovelist, parameters: novelist, label: '作風の元となる小説家' },
+    { key: 'ganre', selected: selectedGenre, setSelected: setSelectedGanre, parameters: ganre, label: 'ジャンル' },
+    { key: 'when', selected: selectedWhen, setSelected: setSelectedWhen, parameters: when, label: 'いつ' },
+    { key: 'where', selected: selectedWhere, setSelected: setSelectedWhere, parameters: where, label: 'どこ' },
+    { key: 'who', selected: selectedWho, setSelected: setSelectedWho, parameters: who, label: '誰が' },
+    { key: 'what', selected: selectedWhat, setSelected: setSelectedWhat, parameters: what, label: '何を' },
+    { key: 'how', selected: selectedHow, setSelected: setSelectedHow, parameters: how, label: 'どのように' },
+    { key: 'why', selected: selectedWhy, setSelected: setSelectedWhy, parameters: why, label: 'なぜ' }
   ];
 
-  const listBoxList : JSX.Element[] = [];
+  const listBoxList: JSX.Element[] = [];
   for (const p of listBoxProps) {
     listBoxList.push(
       (<div className="sm:col-span-2" key={p.key}>
-            <Listbox value={p.selected} onChange={p.setSelected}>
-              {({ open }) => (
-                <>
-                  <Listbox.Label className="block text-sm font-semibold leading-6 text-gray-900">{p.label}</Listbox.Label>
-                  <div className="relative mt-2">
-                    <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
-                      <span className="flex items-center">
-                        <span className="ml-3 block truncate">{p.selected.name}</span>
-                      </span>
-                      <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                      </span>
-                    </Listbox.Button>
-                    <Transition
-                      show={open}
-                      as={Fragment}
-                      leave="transition ease-in duration-100"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    >
-                      <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        {p.parameters.map((item) => (
-                          <Listbox.Option
-                            key={item.id}
-                            className={({ active }) =>
-                              classNames(
-                                active ? 'bg-indigo-600 text-white' : 'text-gray-900',
-                                'relative cursor-default select-none py-2 pl-3 pr-9'
-                              )
-                            }
-                            value={item}
-                          >
-                            {({ selected, active }) => (
-                              <>
-                                <div className="flex items-center">
-                                  <span
-                                    className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
-                                  >
-                                    {item.name}
-                                  </span>
-                                </div>
+        <Listbox value={p.selected} onChange={p.setSelected}>
+          {({ open }) => (
+            <>
+              <Listbox.Label className="block text-sm font-semibold leading-6 text-gray-900">{p.label}</Listbox.Label>
+              <div className="relative mt-2">
+                <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                  <span className="flex items-center">
+                    <span className="ml-3 block truncate">{p.selected.name}</span>
+                  </span>
+                  <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                    <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                  </span>
+                </Listbox.Button>
+                <Transition
+                  show={open}
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    {p.parameters.map((item) => (
+                      <Listbox.Option
+                        key={item.id}
+                        className={({ active }) =>
+                          classNames(
+                            active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                            'relative cursor-default select-none py-2 pl-3 pr-9'
+                          )
+                        }
+                        value={item}
+                      >
+                        {({ selected, active }) => (
+                          <>
+                            <div className="flex items-center">
+                              <span
+                                className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
+                              >
+                                {item.name}
+                              </span>
+                            </div>
 
-                                {selected ? (
-                                  <span
-                                    className={classNames(
-                                      active ? 'text-white' : 'text-indigo-600',
-                                      'absolute inset-y-0 right-0 flex items-center pr-4'
-                                    )}
-                                  >
-                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                                  </span>
-                                ) : null}
-                              </>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </Transition>
-                  </div>
-                </>
-              )}
-            </Listbox>
-          </div>));
+                            {selected ? (
+                              <span
+                                className={classNames(
+                                  active ? 'text-white' : 'text-indigo-600',
+                                  'absolute inset-y-0 right-0 flex items-center pr-4'
+                                )}
+                              >
+                                <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </>
+          )}
+        </Listbox>
+      </div>));
   }
 
   return (
@@ -360,17 +190,18 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="mx-auto mt-4 text-right">
-        <button
-              onClick={handleRandomize} className="rounded-md bg-violet-600 px-3.5 py-2.5 text-center text-xs font-semibold text-white shadow-sm hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
-            >
-              ランダム化
-        </button>
-      </div>
+
       <form onSubmit={handleSubmit} action="#" method="POST" className="mx-auto mt-4 max-w-xl sm:mt-8">
+        <div className="mx-auto mt-4 text-right">
+          <button
+            onClick={handleRandomize} className="rounded-md bg-violet-600 px-3.5 py-2.5 text-center text-xs font-semibold text-white shadow-sm hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+          >
+            ランダム化
+          </button>
+        </div>
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
 
-        { listBoxList }
+          {listBoxList}
 
         </div>
         <div className="mt-10">
@@ -386,7 +217,7 @@ export default function Home() {
         <p className="mt-6 text-lg px-0 leading-8 text-gray-600">
           Created by <a className="font-medium text-indigo-600 dark:text-blue-500 hover:underline" href="https://github.com/sifue">@sifue</a>
         </p>
-     </div>
+      </div>
 
     </div>
 
