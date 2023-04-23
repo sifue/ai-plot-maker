@@ -1,5 +1,5 @@
 # AIプロットメーカー
-ChatGPTで、起承転結の物語のプロットをお手軽作成するWebサービス
+ChatGPTで、三幕構成の物語のプロットをお手軽作成するWebサービス
 
 # 利用方法
 
@@ -22,6 +22,7 @@ PowerShell -ExecutionPolicy RemoteSigned firebase login
 のように、`PowerShell -ExecutionPolicy RemoteSigned`を付けないとログインやデプロイできない。
 ```
 PowerShell -ExecutionPolicy RemoteSigned firebase experiments:enable webframeworks
+PowerShell -ExecutionPolicy RemoteSigned firebase init hosting
 PowerShell -ExecutionPolicy RemoteSigned firebase deploy
 ```
 

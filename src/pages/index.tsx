@@ -177,7 +177,7 @@ export default function Home() {
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">AIプロットメーカー</h2>
         <p className="mt-2 text-lg leading-8 text-gray-600">
-          起承転結の物語のプロットをお手軽作成
+          三幕構成の物語のプロットをお手軽作成
         </p>
       </div>
 
