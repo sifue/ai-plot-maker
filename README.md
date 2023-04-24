@@ -1,8 +1,8 @@
 # AIプロットメーカー
 ChatGPTで、物語のプロットをお手軽作成するWebサービス
-Firebaseで動かすことが前提で、処理を60秒以内に終わらせなくてはならない制限があるため、プロンプトをそのように調整してある。
+Vercelで動かすことを前提で、Edge Functionsを利用している
 
-[https://ai-plot-maker.web.app/](https://ai-plot-maker.web.app/) でテスト運用中。
+[https://ai-plot-maker.vercel.app/](https://ai-plot-maker.vercel.app/) でテスト運用中。
 
 # 利用方法
 
@@ -14,22 +14,7 @@ OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 このようにOpneAIのAPIキーを設定。
 
 ## デプロイ
-[Firebaseでのデプロイ](https://firebase.google.com/docs/hosting/nextjs?hl=ja)を想定。プランは従量制のBlaze以上である必要がある。
-
-Windowsでのログイン時の注意。
-
-```
-PowerShell -ExecutionPolicy RemoteSigned firebase login
-```
-
-のように、`PowerShell -ExecutionPolicy RemoteSigned`を付けないとログインやデプロイできない。
-```
-PowerShell -ExecutionPolicy RemoteSigned firebase experiments:enable webframeworks
-PowerShell -ExecutionPolicy RemoteSigned firebase init hosting
-PowerShell -ExecutionPolicy RemoteSigned firebase deploy
-```
-
-これで静的サイトをデプロイする。デプロイは、ローカルですることを前提。
+Vercelに通常通りログインして、環境変数にOPENAI_API_KEYを設定する。
 
 
 # Next.jsプロジェクトの利用方法
