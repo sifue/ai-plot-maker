@@ -5,7 +5,7 @@ import {
 } from 'eventsource-parser';
 
 import { PlotParameter, PARAMETERS } from '../../components/parameters'
-import type { NextApiRequest } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 export const config = {
     runtime: 'edge',
 }
@@ -40,9 +40,23 @@ function extractDataFromJSONString(content: string): string {
     }
 }
 
-export default async function handler(req: NextApiRequest) {
+function queryParamsToObject(urlSearchParams: URLSearchParams): { [key: string]: string } {
+    const queryParams: { [key: string]: string } = {};
+    const entries = Array.from(urlSearchParams.entries());
+    entries.forEach(([key, value]) => {
+      queryParams[key] = value;
+    });
+    return queryParams;
+  }
+  
+export default async function handler(req: NextRequest) {
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
 
-    if (!req.body) {
+    const url = req.nextUrl;
+    const params = queryParamsToObject(url.searchParams);
+
+    if (!params || !params.novelist || Object.keys(params).length === 0) {
         const readable = new ReadableStream({
             start(controller) {
                 controller.enqueue(
@@ -58,7 +72,7 @@ export default async function handler(req: NextApiRequest) {
         });
     }
 
-    const nps = { ...(req.body) };
+    const nps = { ...(params) };
     transformIdToName(nps);
 
     const prompt = `あなたは、小説家の${nps.novelist}です。これから以下の設定で、小説家の${nps.novelist}の作風を意識して物語のプロットを作成してください。
@@ -150,8 +164,7 @@ export default async function handler(req: NextApiRequest) {
         })
     });
 
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
+
     const readableStream = new ReadableStream({
         async start(controller) {
             function onParse(event: ParsedEvent | ReconnectInterval) {

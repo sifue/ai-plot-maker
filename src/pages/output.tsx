@@ -11,20 +11,6 @@ type OutputState = {
     plot: string,
 }
 
-type ApiResponse = {
-    parmeters: {
-        novelist: string,
-        genre: string,
-        when: string,
-        where: string,
-        who: string,
-        what: string,
-        how: string,
-        why: string
-    },
-    plot: string
-}
-
 function transformIdToName(idParameters: any) {
     idParameters.novelist = getNameFromId(PARAMETERS.novelist, idParameters.novelist);
     idParameters.genre = getNameFromId(PARAMETERS.genre, idParameters.genre);
@@ -52,13 +38,13 @@ export default function Output() {
 
         const fetchData = async () => {
             try {
+                const queryParam = router.asPath.split('?')[1];
                 const requestOptions = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/html; charset=utf-8' },
-                    body: JSON.stringify(router.query)
+                    headers: { 'Content-Type': 'text/html; charset=utf-8' }
                 };
 
-                const response = await fetch('/api/plot.stream', requestOptions);
+                const response = await fetch('/api/plot.stream?'+ queryParam, requestOptions);
                 const reader = response.body?.getReader();
                 if (response.status !== 200 || !reader) {
                     throw new Error('Error fetching data : ' + response.status + ' ' + response.statusText);
