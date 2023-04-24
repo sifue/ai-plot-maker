@@ -1,8 +1,103 @@
+import { PlotParameter, PARAMETERS } from '../../components/parameters'
+import type { NextApiRequest } from 'next'
 export const config = {
     runtime: 'edge',
 }
 
-export default async function handler() {
+function transformIdToName(idParameters: any) {
+    idParameters.novelist = getNameFromId(PARAMETERS.novelist, idParameters.novelist);
+    idParameters.genre = getNameFromId(PARAMETERS.genre, idParameters.genre);
+    idParameters.when = getNameFromId(PARAMETERS.when, idParameters.when);
+    idParameters.where = getNameFromId(PARAMETERS.where, idParameters.where);
+    idParameters.who = getNameFromId(PARAMETERS.who, idParameters.who);
+    idParameters.what = getNameFromId(PARAMETERS.what, idParameters.what);
+    idParameters.how = getNameFromId(PARAMETERS.how, idParameters.how);
+    idParameters.why = getNameFromId(PARAMETERS.why, idParameters.why);
+  }
+  
+function getNameFromId(parameter: PlotParameter[], id: string) {
+   return parameter.find((p) => p.id === parseInt(id))?.name
+}
+  
+export default async function handler(req: NextApiRequest) {
+  const nps = { ...(req.body) };
+  transformIdToName(nps);
+
+  const prompt = `あなたは、小説家の${nps.novelist}です。これから以下の設定で、小説家の${nps.novelist}の作風を意識して物語のプロットを作成してください。
+
+プロットは、起承転結の4シーンを作成してください。
+必ず「起」のシーンでは導入をすること、
+「転」のシーンではクライマックスを迎えること、
+「結」のシーンでは物語の結末を明らかににするように構成してください。
+ 
+各シーンの内容は、
+
+・シーン名
+・登場人物
+・場所
+・時間
+・天候
+・起こる出来事
+・シーンの目的
+・書いておくべき情報・伏線
+    
+以上を明記してください。これらの内容はできるだけ具体的な内容や固有名詞や人物の呼称を含めるようにしてください。
+また「起こる出来事」に関しては、段階的に、読者が展開にのめりこまれるようにより具体的にストーリーを展開してください。
+「結」のシーンの物語の結末についても、読者が納得できるように、物語の伏線を回収するようにしてください。
+    
+では、以下の物語の設定にて、起承転結の4つのシーンのプロットを作成してください。
+    
+・ジャンル: ${nps.genre}
+・いつ（When）：  ${nps.when}
+・どこで（Where）： ${nps.where}
+・誰が（Who）： ${nps.who}
+・何を（What）： ${nps.what}
+・どのように（How）： ${nps.how}
+・なぜ（Why）： ${nps.why}
+    
+以上の設定を再度復唱する必要はありません。加えて、以下のプロットのフォーマットを利用して出力するようにしてください。
+
+■「起」
+・シーン名: 
+・登場人物: 
+・場所: 
+・時間: 
+・天候: 
+・起こる出来事: 
+・シーンの目的: 
+・書いておくべき情報・伏線: 
+
+■「承」
+・シーン名: 
+・登場人物: 
+・場所: 
+・時間: 
+・天候: 
+・起こる出来事: 
+・シーンの目的: 
+・書いておくべき情報・伏線: 
+
+■「転」
+・シーン名: 
+・登場人物: 
+・場所: 
+・時間: 
+・天候: 
+・起こる出来事: 
+・シーンの目的: 
+・書いておくべき情報・伏線: 
+
+■「結」
+・シーン名: 
+・登場人物: 
+・場所: 
+・時間: 
+・天候: 
+・起こる出来事: 
+・シーンの目的: 
+・書いておくべき情報・伏線: 
+`;
+
     const API_KEY = process.env.OPENAI_API_KEY;
     const completion = await fetch('https://api.openai.com/v1/chat/completions', {
         headers: {
@@ -12,7 +107,7 @@ export default async function handler() {
         method: 'POST',
         body: JSON.stringify({
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            messages: [{ role: 'user', content: '何かジョークをひとつ言ってください。'}],
+            messages: [{ role: 'user', content: prompt}],
             model: 'gpt-3.5-turbo',
             stream: true
         })

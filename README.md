@@ -1,5 +1,5 @@
 # AIプロットメーカー
-ChatGPTで、三幕構成の物語のプロットをお手軽作成するWebサービス
+ChatGPTで、物語のプロットをお手軽作成するWebサービス
 Firebaseで動かすことが前提で、処理を60秒以内に終わらせなくてはならない制限があるため、プロンプトをそのように調整してある。
 
 [https://ai-plot-maker.web.app/](https://ai-plot-maker.web.app/) でテスト運用中。
