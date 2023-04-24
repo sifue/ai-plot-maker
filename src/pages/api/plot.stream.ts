@@ -2,7 +2,7 @@ import {
     createParser,
     ParsedEvent,
     ReconnectInterval,
-  } from 'eventsource-parser';
+} from 'eventsource-parser';
 
 import { PlotParameter, PARAMETERS } from '../../components/parameters'
 import type { NextApiRequest } from 'next'
@@ -154,40 +154,40 @@ export default async function handler(req: NextApiRequest) {
     const decoder = new TextDecoder();
     const readableStream = new ReadableStream({
         async start(controller) {
-          function onParse(event: ParsedEvent | ReconnectInterval) {
-            if (event.type === 'event') {
-              const data = event.data;
-              if (data === '[DONE]') {
-                // Signal the end of the stream
-                controller.enqueue(encoder.encode('[DONE]'));
-              }
-              // feed the data to the TransformStream for further processing
-              controller.enqueue(encoder.encode(data));
+            function onParse(event: ParsedEvent | ReconnectInterval) {
+                if (event.type === 'event') {
+                    const data = event.data;
+                    if (data === '[DONE]') {
+                        // Signal the end of the stream
+                        controller.enqueue(encoder.encode('[DONE]'));
+                    }
+                    // feed the data to the TransformStream for further processing
+                    controller.enqueue(encoder.encode(data));
+                }
             }
-          }
-     
-          const parser = createParser(onParse);
-          // https://web.dev/streams/#asynchronous-iteration
-          for await (const chunk of res.body as any) {
-            parser.feed(decoder.decode(chunk));
-          }
+
+            const parser = createParser(onParse);
+            // https://web.dev/streams/#asynchronous-iteration
+            for await (const chunk of res.body as any) {
+                parser.feed(decoder.decode(chunk));
+            }
         },
-      });
-     
-      const transformStream = new TransformStream({
+    });
+
+    const transformStream = new TransformStream({
         async transform(chunk, controller) {
-          const content = decoder.decode(chunk);
-          if (content === '[DONE]') {
-            console.log('done, closing stream...');
-            controller.terminate(); // Terminate the TransformStream
-            return;
-          }
-          const results = extractDataFromJSONString(content);
-          controller.enqueue(encoder.encode(results));
+            const content = decoder.decode(chunk);
+            if (content === '[DONE]') {
+                console.log('done, closing stream...');
+                controller.terminate(); // Terminate the TransformStream
+                return;
+            }
+            const results = extractDataFromJSONString(content);
+            controller.enqueue(encoder.encode(results));
         },
-      });
-     
-      return new Response(readableStream.pipeThrough(transformStream), {
+    });
+
+    return new Response(readableStream.pipeThrough(transformStream), {
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
-      });
+    });
 }
