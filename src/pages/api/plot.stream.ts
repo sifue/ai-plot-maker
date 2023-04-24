@@ -13,17 +13,34 @@ function transformIdToName(idParameters: any) {
     idParameters.what = getNameFromId(PARAMETERS.what, idParameters.what);
     idParameters.how = getNameFromId(PARAMETERS.how, idParameters.how);
     idParameters.why = getNameFromId(PARAMETERS.why, idParameters.why);
-  }
-  
-function getNameFromId(parameter: PlotParameter[], id: string) {
-   return parameter.find((p) => p.id === parseInt(id))?.name
 }
-  
-export default async function handler(req: NextApiRequest) {
-  const nps = { ...(req.body) };
-  transformIdToName(nps);
 
-  const prompt = `あなたは、小説家の${nps.novelist}です。これから以下の設定で、小説家の${nps.novelist}の作風を意識して物語のプロットを作成してください。
+function getNameFromId(parameter: PlotParameter[], id: string) {
+    return parameter.find((p) => p.id === parseInt(id))?.name
+}
+
+export default async function handler(req: NextApiRequest) {
+
+    if (!req.body) {
+        const readable = new ReadableStream({
+            start(controller) {
+                controller.enqueue(
+                    encoder.encode(
+                        '<html><head><title>Request is empty.</title></head><body>Request is empty.</body></html>',
+                    ),
+                );
+                controller.close();
+            },
+        });
+        return new Response(readable, {
+            headers: { 'Content-Type': 'text/html; charset=utf-8' },
+        });
+    }
+
+    const nps = { ...(req.body) };
+    transformIdToName(nps);
+
+    const prompt = `あなたは、小説家の${nps.novelist}です。これから以下の設定で、小説家の${nps.novelist}の作風を意識して物語のプロットを作成してください。
 
 プロットは、起承転結の4シーンを作成してください。
 必ず「起」のシーンでは導入をすること、
@@ -106,7 +123,7 @@ export default async function handler(req: NextApiRequest) {
         },
         method: 'POST',
         body: JSON.stringify({
-            messages: [{ role: 'user', content: prompt}],
+            messages: [{ role: 'user', content: prompt }],
             model: 'gpt-3.5-turbo',
             stream: true
         })
@@ -118,26 +135,26 @@ export default async function handler(req: NextApiRequest) {
     if (completion.status !== 200 || !reader) {
         const readable = new ReadableStream({
             start(controller) {
-              controller.enqueue(
-                encoder.encode(
-                  '<html><head><title>OpenAI API has somthing wrong.</title></head><body>',
-                ),
-              );
-              controller.enqueue(encoder.encode('OpenAI API has somthing wrong.'));
-              controller.enqueue(encoder.encode('<br>status: ' + completion.status));
-              controller.enqueue(encoder.encode('<br>statusText: ' + completion.statusText));
-              controller.enqueue(encoder.encode('</body></html>'));
-              controller.close();
+                controller.enqueue(
+                    encoder.encode(
+                        '<html><head><title>OpenAI API has somthing wrong.</title></head><body>',
+                    ),
+                );
+                controller.enqueue(encoder.encode('OpenAI API has somthing wrong.'));
+                controller.enqueue(encoder.encode('<br>status: ' + completion.status));
+                controller.enqueue(encoder.encode('<br>statusText: ' + completion.statusText));
+                controller.enqueue(encoder.encode('</body></html>'));
+                controller.close();
             },
-          });
-          return new Response(readable, {
+        });
+        return new Response(readable, {
             headers: { 'Content-Type': 'text/html; charset=utf-8' },
-          });
+        });
     }
 
     const decoder = new TextDecoder('utf-8');
     const readable = new ReadableStream({
-        async start(controller) { 
+        async start(controller) {
             try {
                 // readAndEnqueue という再帰関数を定義
                 const readAndEnqueue = async (): Promise<any> => {
@@ -153,7 +170,7 @@ export default async function handler(req: NextApiRequest) {
                     // data: {"id":"chatcmpl-78stxULKFHLxPg1GjbjBATBlajkYg","object":"chat.completion.chunk","created":1682352021,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{},"index":0,"finish_reason":"stop"}]}
                     // data: [DONE]
 
-                    const jsons :any[] = chunk
+                    const jsons: any[] = chunk
                         .split('data:') // JSONがdataに複数格納されていることもあるため split する
                         .map((data) => {
                             const trimData = data.trim();
@@ -162,11 +179,11 @@ export default async function handler(req: NextApiRequest) {
                             return JSON.parse(data.trim());
                         })
                         .filter((data) => data);
-                    
+
                     // console.log(jsons);
                     // 以下のようなオブジェクトの配列になっている
                     // [{"id":"chatcmpl-78stxULKFHLxPg1GjbjBATBlajkYg","object":"chat.completion.chunk","created":1682352021,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":"る"},"index":0,"finish_reason":null}]}]
-                    
+
                     jsons.forEach((json) => {
                         controller.enqueue(
                             encoder.encode(
