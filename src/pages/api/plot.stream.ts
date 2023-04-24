@@ -106,7 +106,6 @@ export default async function handler(req: NextApiRequest) {
         },
         method: 'POST',
         body: JSON.stringify({
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             messages: [{ role: 'user', content: prompt}],
             model: 'gpt-3.5-turbo',
             stream: true
