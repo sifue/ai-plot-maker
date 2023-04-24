@@ -6,23 +6,23 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <NextSeo
-        title="'AIプロットメーカー"
+        title="AIプロットメーカー"
         description="ChatGPTを利用して物語のプロットをお手軽作成"
         canonical="https://ai-plot-maker.vercel.app/"
         openGraph={{
-          url: 'https://ai-plot-maker.vercel.app/',
-          title: 'AIプロットメーカー',
-          description: 'OChatGPTを利用して物語のプロットをお手軽作成',
+          url: "https://ai-plot-maker.vercel.app/",
+          title: "AIプロットメーカー",
+          description: "OChatGPTを利用して物語のプロットをお手軽作成",
           images: [
             {
-              url: 'https://ai-plot-maker.vercel.app/vercel.svg',
+              url: "https://ai-plot-maker.vercel.app/vercel.svg",
               width: 1024,
               height: 235,
-              alt: 'AIプロットメーカー',
-              type: 'image/svg+xml',
+              alt: "AIプロットメーカー",
+              type: "image/svg+xml",
             }
           ],
-          siteName: 'AIプロットメーカー',
+          siteName: "AIプロットメーカー",
         }}
       />
       <Component {...pageProps} />
