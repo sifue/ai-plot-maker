@@ -1,3 +1,9 @@
+import {
+    createParser,
+    ParsedEvent,
+    ReconnectInterval,
+  } from 'eventsource-parser';
+
 import { PlotParameter, PARAMETERS } from '../../components/parameters'
 import type { NextApiRequest } from 'next'
 export const config = {
@@ -17,6 +23,21 @@ function transformIdToName(idParameters: any) {
 
 function getNameFromId(parameter: PlotParameter[], id: string) {
     return parameter.find((p) => p.id === parseInt(id))?.name
+}
+
+/**
+ * JSON String からデータを抽出する
+ * @param content {"id":"chatcmpl-78ujFabH0JI1P4wezczUXyYtegkVt","object":"chat.completion.chunk","created":1682359045,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":"者"},"index":0,"finish_reason":null}]}
+ * @returns 
+ */
+function extractDataFromJSONString(content: string): string {
+    try {
+        const json = JSON.parse(content);
+        return json.choices[0].delta.content;
+    } catch (error) {
+        console.error(error);
+        return '';
+    }
 }
 
 export default async function handler(req: NextApiRequest) {
@@ -116,7 +137,7 @@ export default async function handler(req: NextApiRequest) {
 `;
 
     const API_KEY = process.env.OPENAI_API_KEY;
-    const completion = await fetch('https://api.openai.com/v1/chat/completions', {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${API_KEY}`
@@ -130,80 +151,43 @@ export default async function handler(req: NextApiRequest) {
     });
 
     const encoder = new TextEncoder();
-    const reader = completion.body?.getReader();
-
-    if (completion.status !== 200 || !reader) {
-        const readable = new ReadableStream({
-            start(controller) {
-                controller.enqueue(
-                    encoder.encode(
-                        '<html><head><title>OpenAI API has somthing wrong.</title></head><body>',
-                    ),
-                );
-                controller.enqueue(encoder.encode('OpenAI API has somthing wrong.'));
-                controller.enqueue(encoder.encode('<br>status: ' + completion.status));
-                controller.enqueue(encoder.encode('<br>statusText: ' + completion.statusText));
-                controller.enqueue(encoder.encode('</body></html>'));
-                controller.close();
-            },
-        });
-        return new Response(readable, {
-            headers: { 'Content-Type': 'text/html; charset=utf-8' },
-        });
-    }
-
-    const decoder = new TextDecoder('utf-8');
-    const readable = new ReadableStream({
+    const decoder = new TextDecoder();
+    const readableStream = new ReadableStream({
         async start(controller) {
-            try {
-                // readAndEnqueue という再帰関数を定義
-                const readAndEnqueue = async (): Promise<any> => {
-                    const { done, value } = await reader.read();
-                    if (done) return reader.releaseLock(); // readerが空になったら終了
-
-                    const chunk = decoder.decode(value, { stream: true });
-                    // Event stream format
-                    // https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format
-                    // console.log(chunk);
-                    // 以下のようなテキストが返ってくる
-                    // data: {"id":"chatcmpl-78stxULKFHLxPg1GjbjBATBlajkYg","object":"chat.completion.chunk","created":1682352021,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":"から"},"index":0,"finish_reason":null}]}
-                    // data: {"id":"chatcmpl-78stxULKFHLxPg1GjbjBATBlajkYg","object":"chat.completion.chunk","created":1682352021,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{},"index":0,"finish_reason":"stop"}]}
-                    // data: [DONE]
-
-                    const jsons: any[] = chunk
-                        .split('data:') // JSONがdataに複数格納されていることもあるため split する
-                        .map((data) => {
-                            const trimData = data.trim();
-                            if (trimData === '') return undefined;
-                            if (trimData === '[DONE]') return undefined; // 最後の行
-                            return JSON.parse(data.trim());
-                        })
-                        .filter((data) => data);
-
-                    // console.log(jsons);
-                    // 以下のようなオブジェクトの配列になっている
-                    // [{"id":"chatcmpl-78stxULKFHLxPg1GjbjBATBlajkYg","object":"chat.completion.chunk","created":1682352021,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":"る"},"index":0,"finish_reason":null}]}]
-
-                    jsons.forEach((json) => {
-                        controller.enqueue(
-                            encoder.encode(
-                                json["choices"][0]["delta"]["content"]
-                            ),
-                        );
-                    });
-                    return readAndEnqueue();
-                };
-                await readAndEnqueue();
-            } catch (e) {
-                console.error(e);
+          function onParse(event: ParsedEvent | ReconnectInterval) {
+            if (event.type === 'event') {
+              const data = event.data;
+              if (data === '[DONE]') {
+                // Signal the end of the stream
+                controller.enqueue(encoder.encode('[DONE]'));
+              }
+              // feed the data to the TransformStream for further processing
+              controller.enqueue(encoder.encode(data));
             }
-            // readAndEnqueueの終了後、リソースを解放
-            reader.releaseLock();
-            controller.close();
+          }
+     
+          const parser = createParser(onParse);
+          // https://web.dev/streams/#asynchronous-iteration
+          for await (const chunk of res.body as any) {
+            parser.feed(decoder.decode(chunk));
+          }
         },
-    });
-
-    return new Response(readable, {
+      });
+     
+      const transformStream = new TransformStream({
+        async transform(chunk, controller) {
+          const content = decoder.decode(chunk);
+          if (content === '[DONE]') {
+            console.log('done, closing stream...');
+            controller.terminate(); // Terminate the TransformStream
+            return;
+          }
+          const results = extractDataFromJSONString(content);
+          controller.enqueue(encoder.encode(results));
+        },
+      });
+     
+      return new Response(readableStream.pipeThrough(transformStream), {
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
-    });
+      });
 }
