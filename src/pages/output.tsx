@@ -169,6 +169,11 @@ export default function Output() {
                     </p>
                     <p className="text-base font-semibold leading-7 text-indigo-600"><Link href="/">戻る</Link></p>
                 </div>
+                <div className="text-center">
+                    <p className="mt-6 text-lg px-0 leading-8 text-gray-600">
+                    Created by <a className="font-medium text-indigo-600 dark:text-blue-500 hover:underline" href="https://github.com/sifue">@sifue</a>
+                    </p>
+                </div>
             </div>
         </div>
     )
