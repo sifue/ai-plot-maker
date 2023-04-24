@@ -52,16 +52,28 @@ export default function Output() {
 
         const fetchData = async () => {
             try {
-
                 const requestOptions = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/html; charset=utf-8' },
                     body: JSON.stringify(router.query)
                 };
 
-                const response = await fetch('/api/plot.generate', requestOptions);
-                const jsonResponse: ApiResponse = await response.json();
-                setState({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: jsonResponse.plot });
+                const response = await fetch('/api/plot.stream', requestOptions);
+                const reader = response.body?.getReader();
+                if (response.status !== 200 || !reader) {
+                    throw new Error('Error fetching data : ' + response.status + ' ' + response.statusText);
+                }
+
+                const decoder = new TextDecoder('utf-8');
+                // readAndSetStatus という再帰関数を定義
+                const readAndSetStatus = async (): Promise<any> => {
+                    const { done, value } = await reader.read();
+                    if (done) return reader.releaseLock(); // readerが空になったら終了
+                    const chunk = decoder.decode(value, { stream: true });
+                    setState( prev => ({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: prev.plot + chunk }));
+                    return readAndSetStatus();
+                };
+                await readAndSetStatus();
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setState({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: 'エラーが発生しました。再読み込みを行って再度実行してください。' });
