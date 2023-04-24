@@ -44,11 +44,11 @@ function queryParamsToObject(urlSearchParams: URLSearchParams): { [key: string]:
     const queryParams: { [key: string]: string } = {};
     const entries = Array.from(urlSearchParams.entries());
     entries.forEach(([key, value]) => {
-      queryParams[key] = value;
+        queryParams[key] = value;
     });
     return queryParams;
-  }
-  
+}
+
 export default async function handler(req: NextRequest) {
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
@@ -163,7 +163,6 @@ export default async function handler(req: NextRequest) {
             stream: true
         })
     });
-
 
     const readableStream = new ReadableStream({
         async start(controller) {
