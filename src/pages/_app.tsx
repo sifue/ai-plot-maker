@@ -1,10 +1,19 @@
 import '@/styles/globals.css'
-import { NextSeo } from 'next-seo'
 import type { AppProps } from 'next/app'
+
+import { NextSeo } from 'next-seo'
+
+import { googleTagManagerId } from '../utils/gtm';
+import GoogleTagManager, {
+  GoogleTagManagerId,
+} from '../components/GoogleTagManager';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
+      <GoogleTagManager
+        googleTagManagerId={googleTagManagerId as GoogleTagManagerId}
+      />
       <NextSeo
         title="AIプロットメーカー"
         description="ChatGPTを利用して物語のプロットをお手軽作成"

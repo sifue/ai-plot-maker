@@ -10,8 +10,9 @@ Vercelで動かすことを前提で、Edge Functionsを利用している
 `.env.local` ファイルに
 ```
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID=GTM-xxxxxxxxx
 ```
-このようにOpneAIのAPIキーを設定。
+このようにOpneAIのAPIキーを設定。 `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID` はGTMを利用したGoogle Analitics 4の測定方法だが特に設定しなくてもよい([参考](https://zenn.dev/keitakn/articles/nextjs-google-tag-manager))。
 
 ## デプロイ
 Vercelに通常通りログインして、環境変数にOPENAI_API_KEYを設定する。
