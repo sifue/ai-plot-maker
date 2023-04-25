@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { ThreeDots } from 'react-loader-spinner'
 
 import { PlotParameter, PARAMETERS } from '../components/parameters'
+import { sendGeneratePlot } from '../utils/gtm'
 
 type OutputState = {
     isPlotGenerated: boolean,
@@ -43,6 +44,8 @@ export default function Output() {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/html; charset=utf-8' }
                 };
+
+                sendGeneratePlot('generate_plot_button');
 
                 const response = await fetch('/api/plot.stream?'+ queryParam, requestOptions);
                 const reader = response.body?.getReader();

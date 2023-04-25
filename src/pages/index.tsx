@@ -2,7 +2,6 @@ import { Inter } from 'next/font/google'
 import { useRouter } from 'next/router'
 
 import { PlotParameter, PARAMETERS } from '../components/parameters'
-import { sendGeneratePlot } from '../utils/gtm'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -66,8 +65,6 @@ export default function Home() {
   function handleSubmit(e: SyntheticEvent) {
     const query = { novelist: selectedNovelist.id, genre: selectedGenre.id, when: selectedWhen.id, where: selectedWhere.id, who: selectedWho.id, what: selectedWhat.id, how: selectedHow.id, why: selectedWhy.id };
     e.preventDefault();
-    
-    sendGeneratePlot('generate_plot_button');
     router.push({ pathname: '/output', query: query });
   }
 
