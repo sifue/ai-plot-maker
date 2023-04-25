@@ -47,7 +47,7 @@ export default function Output() {
 
                 sendGeneratePlot('generate_plot_button');
 
-                const response = await fetch('/api/plot.stream?'+ queryParam, requestOptions);
+                const response = await fetch('/api/plot.stream?' + queryParam, requestOptions);
                 const reader = response.body?.getReader();
                 if (response.status !== 200 || !reader) {
                     throw new Error('Error fetching data : ' + response.status + ' ' + response.statusText);
@@ -59,7 +59,7 @@ export default function Output() {
                     const { done, value } = await reader.read();
                     if (done) return reader.releaseLock(); // readerが空になったら終了
                     const chunk = decoder.decode(value, { stream: true });
-                    setState( prev => ({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: prev.plot + chunk }));
+                    setState(prev => ({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: prev.plot + chunk }));
                     return readAndSetStatus();
                 };
                 await readAndSetStatus();
@@ -160,7 +160,13 @@ export default function Output() {
                 </div>
                 <div className="text-center">
                     <p className="mt-6 text-lg px-0 leading-8 text-gray-600">
-                    Created by <a className="font-medium text-indigo-600 dark:text-blue-500 hover:underline" href="https://github.com/sifue">@sifue</a>
+                        Created by <a className="font-medium text-indigo-600 dark:text-blue-500 hover:underline" href="https://github.com/sifue">@sifue</a>
+                    </p>
+                </div>
+                <div className="text-left mx-auto mt-4 max-w-xl sm:mt-8">
+                    <p className="text-xs px-0 py-0 leading-6 text-gray-400">
+                        当サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」を使用しています。このGoogleアナリティクスはデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
+                        この機能はCookieを無効にすることで収集を拒否することが出来ますので、お使いのブラウザの設定をご確認ください。この規約に関しての詳細は<a className="font-medium text-indigo-600 dark:text-blue-500 hover:underline" target="_blank" href="https://marketingplatform.google.com/about/analytics/terms/jp/">Googleアナリティクスサービス利用規約</a>のページや<a className="font-medium text-indigo-600 dark:text-blue-500 hover:underline" target="_blank" href="https://policies.google.com/technologies/ads?hl=ja">Googleポリシーと規約ページ</a>をご覧ください。
                     </p>
                 </div>
             </div>
