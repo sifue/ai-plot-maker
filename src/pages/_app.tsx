@@ -21,7 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
         openGraph={{
           url: "https://ai-plot-maker.vercel.app/",
           title: "AIプロットメーカー",
-          description: "OChatGPTを利用して物語のプロットをお手軽作成",
+          description: "ChatGPTを利用して物語のプロットをお手軽作成",
           images: [
             {
               url: "https://ai-plot-maker.vercel.app/vercel.svg",
