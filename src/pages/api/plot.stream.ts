@@ -135,42 +135,15 @@ export default async function handler(req: NextRequest) {
         })
     });
 
-    const readableStream = new ReadableStream({
-        async start(controller) {
-            function onParse(event: ParsedEvent | ReconnectInterval) {
-                if (event.type === 'event') {
-                    const data = event.data;
-                    if (data === '[DONE]') {
-                        // Signal the end of the stream
-                        controller.enqueue(encoder.encode('[DONE]'));
-                    }
-                    // feed the data to the TransformStream for further processing
-                    controller.enqueue(encoder.encode(data));
-                }
-            }
+    if (res.status !== 200) {
+        console.log(`Fetch to OpenAI API failed. status: ${res.status}`);
+        console.log({ res });
+        return new Response(JSON.stringify({ text: res.text, status: res.status }), { status: res.status });
+    }
 
-            const parser = createParser(onParse);
-            // https://web.dev/streams/#asynchronous-iteration
-            for await (const chunk of res.body as any) {
-                parser.feed(decoder.decode(chunk));
-            }
-        },
+    // 問題なければそのままServer-sent Eventをクライアントに転送する
+    return new Response(res.body, {
+        headers: { 'Content-Type': 'text/event-stream;charset=utf-8' },
     });
 
-    const transformStream = new TransformStream({
-        async transform(chunk, controller) {
-            const content = decoder.decode(chunk);
-            if (content === '[DONE]') {
-                console.log('done, closing stream...');
-                controller.terminate(); // Terminate the TransformStream
-                return;
-            }
-            const results = extractDataFromJSONString(content);
-            controller.enqueue(encoder.encode(results));
-        },
-    });
-
-    return new Response(readableStream.pipeThrough(transformStream), {
-        headers: { 'Content-Type': 'text/html; charset=utf-8' },
-    });
 }

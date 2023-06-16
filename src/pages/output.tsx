@@ -1,3 +1,9 @@
+import {
+    createParser,
+    ParsedEvent,
+    ReconnectInterval,
+} from 'eventsource-parser'
+
 import Link from 'next/link'
 import React, { Fragment, useState, useEffect, SyntheticEvent } from 'react'
 import { useRouter } from "next/router";
@@ -9,6 +15,7 @@ import { sendGeneratePlot } from '../utils/gtm'
 type OutputState = {
     isPlotGenerated: boolean,
     label: string,
+    id: string,
     plot: string,
 }
 
@@ -27,8 +34,37 @@ function getNameFromId(parameter: PlotParameter[], id: string) {
     return parameter.find((p) => p.id === parseInt(id))?.name
 }
 
+type ContentDelta = {
+    id: string,
+    text: string,
+}
+
+/**
+ * JSON String からdeltaの文字列データを抽出する
+ * @param content {"id":"chatcmpl-78ujFabH0JI1P4wezczUXyYtegkVt","object":"chat.completion.chunk","created":1682359045,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":"者"},"index":0,"finish_reason":null}]}
+ * @returns 
+ */
+function extractDataFromJSONString(content: string): ContentDelta | null {
+    try {
+        const json = JSON.parse(content);
+        if (json.choices[0].delta.content) {
+            return { id: json.id, text: json.choices[0].delta.content };
+        } else {
+            return null;
+        }
+    } catch (error) {
+        // console.error(error);
+        return null;
+    }
+}
+
 export default function Output() {
-    const [state, setState] = useState<OutputState>({ isPlotGenerated: false, label: '作成中です、数十秒お待ちください', plot: '' } as OutputState);
+    const [state, setState] = useState<OutputState>({
+        isPlotGenerated: false,
+        label: '作成中です、数十秒お待ちください',
+        id: '',
+        plot: ''
+    });
     const router = useRouter();
     const nps = { ...router.query };
     transformIdToName(nps);
@@ -38,34 +74,66 @@ export default function Output() {
         if (!router.query) return; // パラメータがない場合は実行しない
 
         const fetchData = async () => {
-            try {
-                const queryParam = router.asPath.split('?')[1];
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/html; charset=utf-8' }
-                };
+            const queryParam = router.asPath.split('?')[1];
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/html; charset=utf-8' }
+            };
 
-                sendGeneratePlot('generate_plot_button');
+            sendGeneratePlot('generate_plot_button');
 
-                const response = await fetch('/api/plot.stream?' + queryParam, requestOptions);
-                const reader = response.body?.getReader();
-                if (response.status !== 200 || !reader) {
-                    throw new Error('Error fetching data : ' + response.status + ' ' + response.statusText);
+            const res = await fetch('/api/plot.stream?' + queryParam, requestOptions);
+
+            if (!res.ok) {
+                const errorMessage = `Failed to fetch. status:${res.status} text:${res.text}} body: ${res.body}`;
+                console.error(errorMessage);
+                return;
+            }
+
+            if (!res.body) {
+                const errorMessage = 'No data received. response body is empty.';
+                console.error(errorMessage);
+                return;
+            }
+            const reader = res.body.getReader();
+
+            function onParse(event: ParsedEvent | ReconnectInterval) {
+                if (event.type === 'event') {
+                    // console.log('Received event!')
+                    // console.log('id: %s', event.id || '<none>')
+                    // console.log('data: %s', event.data)
+
+                    // Event Sourceからの情報取得
+                    const delta = extractDataFromJSONString(event.data);
+                    if (!delta) return;
+
+                    // 更新処理
+                    setState((prev) => {
+                        // 空か前回と同じならば更新
+                        if (prev.id === '' || prev.id === delta.id) {
+                            return {
+                                isPlotGenerated: true,
+                                label: 'AIによる生成プロット',
+                                id: delta.id,
+                                plot: prev.plot + delta.text
+                            };
+                        } else {
+                            return prev;
+                        }
+                    });
+
+                } else if (event.type === 'reconnect-interval') {
+                    console.log('We should set reconnect interval to %d milliseconds', event.value);
                 }
+            };
 
-                const decoder = new TextDecoder('utf-8');
-                // readAndSetStatus という再帰関数を定義
-                const readAndSetStatus = async (): Promise<any> => {
-                    const { done, value } = await reader.read();
-                    if (done) return reader.releaseLock(); // readerが空になったら終了
-                    const chunk = decoder.decode(value, { stream: true });
-                    setState(prev => ({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: prev.plot + chunk }));
-                    return readAndSetStatus();
-                };
-                await readAndSetStatus();
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setState({ isPlotGenerated: true, label: 'AIによる生成プロット', plot: 'エラーが発生しました。再読み込みを行って再度実行してください。' });
+            const decoder = new TextDecoder('utf-8');
+            const parser = createParser(onParse);
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const decodedValue = decoder.decode(value);
+                parser.feed(decodedValue);
             }
         };
         fetchData();
