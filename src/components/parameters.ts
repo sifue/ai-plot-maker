@@ -16,7 +16,7 @@ export const PARAMETERS: {
   novelist: [
     {
       id: 1,
-      name: '村上春樹'
+      name: '芥川龍之介'
     },
     {
       id: 2,
@@ -28,31 +28,31 @@ export const PARAMETERS: {
     },
     {
       id: 4,
-      name: '三島由紀夫'
+      name: '夢野久作'
     },
     {
       id: 5,
-      name: '宮部みゆき'
+      name: '太宰治'
     },
     {
       id: 6,
-      name: '芥川龍之介'
+      name: '谷崎潤一郎'
     },
     {
       id: 7,
-      name: '辻村深月'
+      name: '二葉亭四迷'
     },
     {
       id: 8,
-      name: '大江健三郎'
+      name: '森鴎外'
     },
     {
       id: 9,
-      name: '安部公房'
+      name: '島崎藤村'
     },
     {
       id: 10,
-      name: '川原礫'
+      name: 'ウィリアム・シェイクスピア'
     }
   ],
   genre: [
