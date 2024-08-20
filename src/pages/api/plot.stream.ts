@@ -130,7 +130,7 @@ export default async function handler(req: NextRequest) {
         method: 'POST',
         body: JSON.stringify({
             messages: [{ role: 'user', content: prompt }],
-            model: 'gpt-3.5-turbo-16k',
+            model: 'gpt-4o-mini',
             stream: true
         })
     });
