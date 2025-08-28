@@ -1,10 +1,23 @@
 # AIプロットメーカー
-ChatGPTで、物語のプロットをお手軽作成するWebサービス
-Vercelで動かすことを前提で、Edge Functionsを利用している
+ChatGPTで、物語のプロットをお手軽作成するWebサービス。
+Vercelで動かすことを前提で、Edge Functionsを利用しています。
 
 [https://ai-plot-maker.vercel.app/](https://ai-plot-maker.vercel.app/) でテスト運用中。
 
 # 利用方法
+
+## 重要なお知らせ（2025-08）
+- Node.js 18のVercelサポート終了に伴い、Node.js 22にアップグレードしました。
+- 生成AIモデルを gpt-4o から gpt-5 に切り替えました（高速・高品質化）。
+
+### Node.js バージョン要件
+- 本プロジェクトは Node.js 22 を前提とします。
+- `package.json` の `engines.node` は `22.x` に設定済みです。
+- ローカル開発時は Node.js 22 環境で実行してください（例：`nvm use 22`）。
+
+### モデルについて（gpt-5）
+- API の呼び出しモデルは `gpt-5` を利用します。
+- ストリーミングは従来どおり Server-Sent Events を利用しています。
 
 ## 環境変数の設定
 `.env.local` ファイルに
@@ -15,7 +28,8 @@ NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID=GTM-xxxxxxxxx
 このようにOpneAIのAPIキーを設定。 `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID` はGTMを利用したGoogle Analitics 4の測定方法だが特に設定しなくてもよい([参考](https://zenn.dev/keitakn/articles/nextjs-google-tag-manager))。
 
 ## デプロイ
-Vercelに通常通りログインして、環境変数にOPENAI_API_KEYを設定する。
+Vercelに通常通りログインして、環境変数に `OPENAI_API_KEY` を設定してください。
+また、VercelのProject SettingsでNode.jsのバージョンが22系であることを確認してください（`package.json` の `engines` と揃える）。
 
 
 # Next.jsプロジェクトの利用方法

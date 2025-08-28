@@ -47,8 +47,15 @@ type ContentDelta = {
 function extractDataFromJSONString(content: string): ContentDelta | null {
     try {
         const json = JSON.parse(content);
-        if (json.choices[0].delta.content) {
+        // Chat Completions 形式
+        if (json?.choices && json?.choices[0]?.delta?.content) {
             return { id: json.id, text: json.choices[0].delta.content };
+        }
+        // Responses API 形式（gpt-5など）
+        // 例: {"type":"response.output_text.delta","delta":"...","response":{"id":"resp_..."}}
+        if (json?.type === 'response.output_text.delta' && typeof json?.delta === 'string') {
+            const id = json?.response?.id || json?.id || '';
+            return { id, text: json.delta };
         } else {
             return null;
         }

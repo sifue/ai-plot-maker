@@ -122,23 +122,31 @@ export default async function handler(req: NextRequest) {
 `;
 
     const API_KEY = process.env.OPENAI_API_KEY;
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    if (!API_KEY) {
+        return new Response(JSON.stringify({ message: 'OPENAI_API_KEY が設定されていません。サーバー側環境変数を確認してください。' }), { status: 500 });
+    }
+
+    const res = await fetch('https://api.openai.com/v1/responses', {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${API_KEY}`
         },
         method: 'POST',
         body: JSON.stringify({
-            messages: [{ role: 'user', content: prompt }],
-            model: 'gpt-4o-mini',
+            model: 'gpt-5',
+            input: prompt,
             stream: true
         })
     });
 
     if (res.status !== 200) {
+        let errorText = '';
+        try {
+            errorText = await res.text();
+        } catch (_) {}
         console.log(`Fetch to OpenAI API failed. status: ${res.status}`);
-        console.log({ res });
-        return new Response(JSON.stringify({ text: res.text, status: res.status }), { status: res.status });
+        console.log(errorText);
+        return new Response(JSON.stringify({ status: res.status, message: errorText || 'OpenAI API 呼び出しに失敗しました' }), { status: res.status });
     }
 
     // 問題なければそのままServer-sent Eventをクライアントに転送する
