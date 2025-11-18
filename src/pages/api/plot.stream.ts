@@ -133,7 +133,7 @@ export default async function handler(req: NextRequest) {
         },
         method: 'POST',
         body: JSON.stringify({
-            model: 'gpt-5',
+            model: 'gpt-5.1',
             input: prompt,
             stream: true
         })
