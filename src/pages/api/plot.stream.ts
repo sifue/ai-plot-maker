@@ -1,11 +1,6 @@
-import {
-    createParser,
-    ParsedEvent,
-    ReconnectInterval,
-} from 'eventsource-parser';
-
 import { PlotParameter, PARAMETERS } from '../../components/parameters'
-import { NextRequest, NextResponse } from 'next/server'
+import { buildPlotPrompt } from '../../lib/plot-prompt'
+import { NextRequest } from 'next/server'
 export const config = {
     runtime: 'edge',
 }
@@ -25,21 +20,6 @@ function getNameFromId(parameter: PlotParameter[], id: string) {
     return parameter.find((p) => p.id === parseInt(id))?.name
 }
 
-/**
- * JSON String からデータを抽出する
- * @param content {"id":"chatcmpl-78ujFabH0JI1P4wezczUXyYtegkVt","object":"chat.completion.chunk","created":1682359045,"model":"gpt-3.5-turbo-0301","choices":[{"delta":{"content":"者"},"index":0,"finish_reason":null}]}
- * @returns 
- */
-function extractDataFromJSONString(content: string): string {
-    try {
-        const json = JSON.parse(content);
-        return json.choices[0].delta.content;
-    } catch (error) {
-        console.error(error);
-        return '';
-    }
-}
-
 function queryParamsToObject(urlSearchParams: URLSearchParams): { [key: string]: string } {
     const queryParams: { [key: string]: string } = {};
     const entries = Array.from(urlSearchParams.entries());
@@ -51,7 +31,6 @@ function queryParamsToObject(urlSearchParams: URLSearchParams): { [key: string]:
 
 export default async function handler(req: NextRequest) {
     const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
 
     const url = req.nextUrl;
     const params = queryParamsToObject(url.searchParams);
@@ -75,66 +54,26 @@ export default async function handler(req: NextRequest) {
     const nps = { ...(params) };
     transformIdToName(nps);
 
-    const prompt = `あなたは、小説家の${nps.novelist}です。これから以下の設定で、小説家の${nps.novelist}の作風を意識して物語のプロットを作成してください。
+    const prompt = buildPlotPrompt(nps);
 
-プロットは、起承転結の4シーンを作成してください。
-必ず「起」のシーンでは導入をすること、
-「転」のシーンではクライマックスを迎えること、
-「結」のシーンでは物語の結末を明らかににするように構成してください。
- 
-各シーンの内容は、
-
-・シーン名
-・登場人物
-・場所
-・時間
-・天候
-・起こる出来事
-・シーンの目的
-・書いておくべき情報・伏線
-    
-以上を明記してください。これらの内容はできるだけ具体的な内容や固有名詞や人物の呼称を含めるようにしてください。
-また「起こる出来事」に関しては、段階的に、読者が展開にのめりこまれるようにより具体的にストーリーを展開してください。
-「結」のシーンの物語の結末についても、読者が納得できるように、物語の伏線を回収するようにしてください。
-また、登場人物に小説家自身の名前を含めないようにしてください。
-    
-では、以下の物語の設定にて、起承転結の4つのシーンのプロットを作成してください。
-    
-・ジャンル: ${nps.genre}
-・いつ（When）：  ${nps.when}
-・どこで（Where）： ${nps.where}
-・誰が（Who）： ${nps.who}
-・何を（What）： ${nps.what}
-・どのように（How）： ${nps.how}
-・なぜ（Why）： ${nps.why}
-    
-以上の設定を再度復唱する必要はありません。加えて、各シーンごと以下のプロットのフォーマットを利用して出力するようにしてください。
-
-■「起」
-・シーン名: 
-・登場人物: 
-・場所: 
-・時間: 
-・天候: 
-・起こる出来事: 
-・シーンの目的: 
-・書いておくべき情報・伏線: 
-`;
-
-    const API_KEY = process.env.OPENAI_API_KEY;
-    if (!API_KEY) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
         return new Response(JSON.stringify({ message: 'OPENAI_API_KEY が設定されていません。サーバー側環境変数を確認してください。' }), { status: 500 });
     }
+
+    const model = process.env.OPENAI_MODEL || 'gpt-5.6-luna';
 
     const res = await fetch('https://api.openai.com/v1/responses', {
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${API_KEY}`
+            Authorization: `Bearer ${apiKey}`
         },
         method: 'POST',
         body: JSON.stringify({
-            model: 'gpt-5.1',
+            model,
             input: prompt,
+            // GPT-5.1の既定値と同じ条件にして、移行時の遅延増加を防ぐ
+            reasoning: { effort: 'none' },
             stream: true
         })
     });

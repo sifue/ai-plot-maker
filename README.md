@@ -1,74 +1,106 @@
 # AIプロットメーカー
-ChatGPTで、物語のプロットをお手軽作成するWebサービス。
-Vercelで動かすことを前提で、Edge Functionsを利用しています。
+
+生成AIを使って、物語のプロットを手軽に作成するWebサービスです。
+Vercelで動かすことを前提に、Edge Functionsを利用しています。
 
 [https://ai-plot-maker.vercel.app/](https://ai-plot-maker.vercel.app/) でテスト運用中。
 
-# 利用方法
+## 動作要件
 
-## 重要なお知らせ（2025-08）
-- Node.js 18のVercelサポート終了に伴い、Node.js 22にアップグレードしました。
-- 生成AIモデルを gpt-4o から gpt-5.1 に切り替えました（高速・高品質化）。
+- Node.js 24
+- npm 11
+- OpenAI APIキー
 
-### Node.js バージョン要件
-- 本プロジェクトは Node.js 22 を前提とします。
-- `package.json` の `engines.node` は `22.x` に設定済みです。
-- ローカル開発時は Node.js 22 環境で実行してください（例：`nvm use 22`）。
+バージョン0.3.0で、VercelのNode.js 20サポート終了に備えてNode.js 24へ更新し、生成モデルを`gpt-5.1`から`gpt-5.6-luna`へ変更しました。
 
-### モデルについて（gpt-5.1）
-- API の呼び出しモデルは `gpt-5.1` を利用します。
-- ストリーミングは従来どおり Server-Sent Events を利用しています。
+## OpenAIモデル
 
-## 環境変数の設定
-`.env.local` ファイルに
-```
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID=GTM-xxxxxxxxx
-```
-このようにOpneAIのAPIキーを設定。 `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID` はGTMを利用したGoogle Analitics 4の測定方法だが特に設定しなくてもよい([参考](https://zenn.dev/keitakn/articles/nextjs-google-tag-manager))。
+- 既定モデル: `gpt-5.6-luna`
+- API: Responses API
+- 配信方式: Server-Sent Eventsによるストリーミング
+- Reasoning effort: `none`
 
-## デプロイ
-Vercelに通常通りログインして、環境変数に `OPENAI_API_KEY` を設定してください。
-また、VercelのProject SettingsでNode.jsのバージョンが22系であることを確認してください（`package.json` の `engines` と揃える）。
+GPT-5.6-lunaの既定のreasoning effortは`medium`ですが、このサービスのプロット生成では、GPT-5.1と同じ条件で遅延を抑えられる`none`を明示しています。モデルはVercelの環境変数`OPENAI_MODEL`で上書きできるため、問題発生時は`gpt-5.1`へ戻せます。
 
+### 価格比較
 
-# Next.jsプロジェクトの利用方法
+2026年8月17日時点の公式価格です。金額は100万トークンあたりの米ドル価格です。
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+| モデル | 入力 | キャッシュ入力 | 出力 |
+| --- | ---: | ---: | ---: |
+| GPT-5.1 | $1.25 | $0.125 | $10.00 |
+| GPT-5.6 Luna | $0.20 | $0.02 | $1.20 |
 
-## Getting Started
+最新価格は[GPT-5.1のモデル情報](https://developers.openai.com/api/docs/models/gpt-5.1)と[GPT-5.6 Lunaのモデル情報](https://developers.openai.com/api/docs/models/gpt-5.6-luna)を確認してください。
 
-First, run the development server:
+### 移行時の比較結果
+
+ミステリー、SF、人間ドラマの3入力を同じプロンプトで1回ずつ生成した結果です。時間はネットワークやAPIの混雑状況で変動するため、相対的な目安として扱ってください。
+
+| モデル・設定 | 初回出力までの平均 | 完了までの平均 | 平均出力トークン | 3回分の推定費用 | 必須形式の充足 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GPT-5.1 / none | 1.31秒 | 86.51秒 | 7,068 | $0.214025 | 3/3 |
+| GPT-5.6 Luna / none | 1.16秒 | 34.25秒 | 4,150 | $0.015260 | 3/3 |
+| GPT-5.6 Luna / low | 1.86秒 | 37.29秒 | 4,455 | $0.016357 | 3/3 |
+
+`gpt-5.6-luna`の`none`は、GPT-5.1と比べて初回出力が約11%速く、完了までが約60%速く、実測トークンを含む推定費用が約93%低い結果でした。全ケースで起承転結、各シーンの必須項目、作家名を登場人物に含めない条件を満たしたため、この構成を採用しています。
+
+比較は次のコマンドで再実行できます。OpenAI APIの利用料金が発生します。
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+npm run evaluate:models
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+特定の構成だけを評価する場合は、`EVALUATION_MODELS`を指定します。
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```bash
+EVALUATION_MODELS=gpt-5.6-luna:none npm run evaluate:models
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## ローカル開発
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+`.nvmrc`を利用する場合は、Node.js 24をインストールして切り替えます。
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+nvm install
+nvm use
+npm ci
+npm run dev
+```
 
-## Learn More
+## 環境変数の設定
 
-To learn more about Next.js, take a look at the following resources:
+`.env.local`ファイルに次の値を設定します。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```dotenv
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+OPENAI_MODEL=gpt-5.6-luna
+NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID=GTM-xxxxxxxxx
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+`OPENAI_MODEL`は省略可能で、省略時は`gpt-5.6-luna`を利用します。`NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID`も任意です。
 
-## Deploy on Vercel
+## デプロイ
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Vercelの環境変数に`OPENAI_API_KEY`を設定してください。Project SettingsのNode.js Versionは、`package.json`の`engines`と同じ24系に設定します。Preview Deploymentで生成とストリーミングを確認してからProductionへ反映してください。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 主なコマンド
+
+```bash
+npm run dev              # 開発サーバーを起動
+npm run lint             # ESLintを実行
+npm run build            # 本番ビルドを作成
+npm run start            # 本番ビルドを起動
+npm run evaluate:models  # OpenAIモデルを比較評価
+```
+
+## 技術構成
+
+- Next.js 13.5.11（Pages Router）
+- React 18
+- TypeScript
+- Tailwind CSS
+- Vercel Edge Functions
+- OpenAI Responses API
+
+詳細は[Next.jsドキュメント](https://nextjs.org/docs)と[Vercelのデプロイドキュメント](https://vercel.com/docs/deployments)を参照してください。

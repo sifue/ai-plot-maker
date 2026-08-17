@@ -51,7 +51,7 @@ function extractDataFromJSONString(content: string): ContentDelta | null {
         if (json?.choices && json?.choices[0]?.delta?.content) {
             return { id: json.id, text: json.choices[0].delta.content };
         }
-        // Responses API 形式（gpt-5.1など）
+        // Responses API 形式
         // 例: {"type":"response.output_text.delta","delta":"...","response":{"id":"resp_..."}}
         if (json?.type === 'response.output_text.delta' && typeof json?.delta === 'string') {
             const id = json?.response?.id || json?.id || '';
