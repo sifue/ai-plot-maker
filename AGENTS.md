@@ -18,48 +18,46 @@
 
 ### 対応が必要な問題
 
-#### Node.js 22へのアップデート
+#### Node.js 24へのアップデート
 
-以下の連絡があり、Node.js 18のサポートが終了するため、Node.js 22へのアップグレードが必要です。この対応を進める必要があります。
+以下の連絡があり、Node.js 20のサポートが終了するため、Node.js 24へのアップグレードが必要です。この対応を進める必要があります。
 
 
 ```
-Hi sifue,
+Hi there,
 
-Starting Monday, September 1st, 2025, Node.js 18 will no longer be supported on Vercel. Please upgrade to Node.js 22 as soon as possible to keep receiving security updates and prevent any errors.
+Please upgrade to Node.js 24 as soon as possible. After October 1st, new builds using Node.js 20 will fail. Node.js 20 has reached end-of-life and no longer receives important security updates.
 
-Your account is associated with the following projects using Node.js 18:
 
-- ai-plot-maker
-- otsukaeiji-storymaker
+Your account is associated with the following projects using Node.js 20:
 
-You can see which of your projects for a specific team are affected with:
+ai-plot-maker
+mcq-maker
+mcq-maker-z
+nextjs-quickstart
+otsukaeiji-storymaker
+How to upgrade
+Team Owners and Members can upgrade all deprecated projects with a single click from the Vercel Dashboard. Alternatively, you can upgrade individual projects on the Build and Deployment page in your Vercel Project Settings.
+
+Note: If you’ve explicitly set your Node.js version in package.json, this will override any dashboard setting so you’ll still need to update that manually to "24.x".
+
+You can additionally check your affected projects via CLI, by running:
 
 $ npm i -g vercel@latest
 $ vercel project ls --update-required --scope VERCEL_TEAM_SLUG
-To upgrade:
-
-Update engines in package.json to "22.x" or on the General page in your Vercel Project Settings.
-Create a new deployment for the changes to take effect.
-In many cases, you will need to update dependencies in package.json as well.
 
 For more information, check out the documentation.
 
 Happy shipping,
 
 The Vercel Team
+
 ```
 
-#### GPT-5対応
-gpt-5がリリースされました、価格的にも性能的にも向上しているため、gpt-4oからgpt-5に切り替える必要があります。
-
-リリース情報は以下のとおり。
-
-- [gpt-5のリリースノート](https://openai.com/ja-JP/gpt-5/)
-- [gpt-5のモデルリファレンス](https://platform.openai.com/docs/models/gpt-5)
-- [gpt-5のプロンプトガイド](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)
-- [gpt-5のFrontend coding with GPT-5](https://cookbook.openai.com/examples/gpt-5/gpt-5_frontend)
-- [gpt-5のNew Params and Tools](https://cookbook.openai.com/examples/gpt-5/gpt-5_new_params_and_tools)
+#### GPT-5.6対応
+gpt-5.6がリリースされました、価格的にも性能的にも向上しているため、
+gpt-5.6-lunaを導入してうごくようにしてください。元のモデルから費用面、パフォーマンス面で
+劣らないかを調査して組み込んでもらうようお願いします。
 
 切り替えによってパフォーマンスが向上するかどうかを検討し、必要に応じてコードの修正を行ってください。
 またREADME.mdの内容も更新し、バージョンをあげてください。
